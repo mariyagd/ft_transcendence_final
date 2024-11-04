@@ -76,14 +76,14 @@ export function addPlayerField(index, noControls = false) {
     }
 
     divKeys.innerHTML += `
-        <div class="mb-2 d-flex align-items-center mx-3">
-            <label class="col-form-label text-start text-nowrap key-label" data-translate="up_key_label">${upLabel} :</label>
+		<div class="mb-2 d-flex align-items-center mx-3">
+            <label class="col-form-label text-start text-nowrap key-label" data-translate="${mode === 'brickBreaker' || (mode === 'lastManStanding' && index >= 2) ? 'left_key_label' : 'up_key_label'}">${upLabel} :</label>
             <div class="flex-grow-1 ms-4">
                 <input type="text" class="form-control touch-field" id="player${index}Up" data-translate="press_key_placeholder" placeholder="Press a key" autocomplete="off">
             </div>
         </div>
         <div class="mb-2 d-flex align-items-center mx-3">
-            <label class="col-form-label text-start text-nowrap key-label" data-translate="down_key_label">${downLabel} :</label>
+            <label class="col-form-label text-start text-nowrap key-label" data-translate="${mode === 'brickBreaker' || (mode === 'lastManStanding' && index >= 2) ? 'right_key_label' : 'down_key_label'}">${downLabel} :</label>
             <div class="flex-grow-1 ms-4">
                 <input type="text" class="form-control touch-field" id="player${index}Down" data-translate="press_key_placeholder" placeholder="Press a key" autocomplete="off">
             </div>

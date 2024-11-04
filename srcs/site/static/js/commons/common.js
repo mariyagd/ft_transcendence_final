@@ -111,7 +111,6 @@ const translations = {
     en: {
         "footer_names": "amonbaro | cmansey | mdanchev | abarras",
         "unstable_button": "Unstable button. Click at your own risk.",
-
         "user_login": "User Login",
         "email_label": "Email",
         "email_placeholder": "Enter your email",
@@ -119,7 +118,6 @@ const translations = {
         "password_placeholder": "Enter your password",
         "close_button": "Close",
         "login_button": "Login",
-
         "customize_play": "Customize & Play",
         "game_mode": "Game Mode :",
         "game_mode_versus": "Versus",
@@ -139,12 +137,13 @@ const translations = {
         "find_match": "Friend with a similar winning percentage",
         "default_settings": "Default Settings",
         "start_game": "Start Game",
-
         "player_title": "Player",
         "enter_player_name": "Enter player name",
         "connect_button": "Connect",
         "up_key_label": "Up Key",
         "down_key_label": "Down Key",
+        "left_key_label": "Left Key",
+        "right_key_label": "Right Key",
         "press_key_placeholder": "Press a key",
         "max_score_na": "N/A",
         "must_have_name_and_keys": "must have a name and keys assigned!",
@@ -165,11 +164,11 @@ const translations = {
         "close_button": "Fermer",
         "login_button": "Connexion",
         "customize_play": "Personnaliser & Jouer",
+        "game_mode": "Mode de jeu :",
         "game_mode_versus": "Face-à-face",
         "game_mode_tournament": "Tournoi",
         "game_mode_last_man_standing": "Dernier en lice",
         "game_mode_brick_breaker": "Casse-briques",
-        "game_mode": "Mode de jeu :",
         "add_player": "Ajouter un joueur",
         "remove_player": "Supprimer un joueur",
         "max_score": "Score maximal :",
@@ -188,6 +187,8 @@ const translations = {
         "connect_button": "Connecter",
         "up_key_label": "Touche Haut",
         "down_key_label": "Touche Bas",
+        "left_key_label": "Touche Gauche",
+        "right_key_label": "Touche Droite",
         "press_key_placeholder": "Appuyez sur une touche",
         "max_score_na": "N/A",
         "must_have_name_and_keys": "doit avoir un nom et des touches assignés!",
@@ -231,6 +232,8 @@ const translations = {
         "connect_button": "Conectar",
         "up_key_label": "Tecla Arriba",
         "down_key_label": "Tecla Abajo",
+        "left_key_label": "Tecla Izquierda",
+        "right_key_label": "Tecla Derecha",
         "press_key_placeholder": "Presione una tecla",
         "max_score_na": "N/A",
         "must_have_name_and_keys": "debe tener un nombre y teclas asignadas!",
@@ -239,7 +242,7 @@ const translations = {
         "key_already_assigned": "La tecla ya está asignada a otro jugador.",
         "back_to_menu": "Volver al menú",
         "go_to_settings": "Ir a configuración"
-    }
+    }    
 };
 
 document.addEventListener('DOMContentLoaded', () => {
