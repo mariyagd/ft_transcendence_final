@@ -139,17 +139,6 @@
     }
 }
 
-/* CSS pour centrer le bouton dans le footer */
-.footer-center-button {
-    position: relative;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.language-selector-width {
-    width: 150px;
-}
-
 .profile_preview {
 	display: none;
 	width: 150px;

@@ -1,4 +1,3 @@
-// Générique pour afficher un message de succès ou d'erreur
 function showMessage(message, type = 'success', containerId = 'messageContainer')
 {
     const messageContainer = document.getElementById(containerId);
@@ -10,7 +9,6 @@ function showMessage(message, type = 'success', containerId = 'messageContainer'
                 ${message}
             </div>
         `;
-        // Faire disparaître le message après 2 secondes
         setTimeout(() =>
 		{
             messageContainer.innerHTML = '';
@@ -18,95 +16,108 @@ function showMessage(message, type = 'success', containerId = 'messageContainer'
     }
 }
 
-// Vérifier et afficher un message stocké dans localStorage
 function checkForMessage(containerId = 'messageContainer')
 {
     const successMessage = localStorage.getItem('successMessage');
     if (successMessage)
 	{
         showMessage(successMessage, 'success', containerId);
-        localStorage.removeItem('successMessage'); // Supprimer le message après affichage
+        localStorage.removeItem('successMessage');
     }
 }
 
-// Fonction pour ajouter un bas de page avec uniquement des classes Bootstrap et un style CSS global
 function addFooter() {
     if (document.body.hasAttribute('data-no-footer')) {
         return;
     }
 
     const footerContainer = document.createElement('div');
-    footerContainer.classList.add('fixed-bottom', 'bg-light-subtle', 'border-top', 'p-3');
+    footerContainer.classList.add('bg-light-subtle', 'border-top', 'mt-auto');
 
     footerContainer.innerHTML = `
-        <footer class="footer d-flex justify-content-between align-items-center text-white container">
-            <p class="mb-0 text-start" data-translate="footer_names">amonbaro | cmansey | mdanchev | abarras</p>
-            <div class="footer-center-button">
-                <button onclick="redirectRandomSite()" class="btn btn-primary" data-translate="unstable_button">
-                    Unstable button. Click at your own risk.
-                </button>
-            </div>
-            <div id="language_selector_container" class="ms-auto">
-                <select id="languageSelector" class="form-select language-selector-width">
-                    <option value="en">English</option>
-                    <option value="fr">Français</option>
-                    <option value="es">Español</option>
-                </select>
-            </div>
-        </footer>
+	<footer class="footer container-fluid">
+		<div class="row flex-column flex-md-row justify-content-between align-items-center text-center text-md-start mx-3">
+
+			<div class="col-md-auto my-2">
+				<a href="https://42lausanne.ch/">
+					<img src="../../media/images/42_logo.png" alt="logo" height="50" class="d-inline-block align-text-top">
+				</a>
+			</div>
+
+			<div class="col-md-auto my-2">
+				<a href="https://www.linkedin.com/in/adrien-barras/" class="text-decoration-none text-white">abarras</a> |
+				<a href="https://www.linkedin.com/in/ari-monbaron-57432b179" class="text-decoration-none text-white">amonbaro</a> |
+				<a href="#" class="text-decoration-none text-white">cmansey</a> |
+				<a href="https://www.linkedin.com/in/mariya-dancheva/" class="text-decoration-none text-white">mdanchev</a>
+			</div>
+
+			<div class="col-md-auto my-2 small" id="language_selector_container">
+				<a href="#" id="lang-en" class="d-block text-decoration-none text-white">English</a>
+				<a href="#" id="lang-fr" class="d-block text-decoration-none text-white mt-2">Français</a>
+				<a href="#" id="lang-es" class="d-block text-decoration-none text-white mt-2">Español</a>
+			</div>
+
+			<div class="col-md-auto my-2">
+				<a href="#" class="navbar-brand">
+					<img src="../../media/images/circle-up.png" alt="Scroll to top" height="40" class="d-inline-block align-text-top">
+				</a>
+			</div>
+		</div>
+	</footer>
     `;
 
     document.body.appendChild(footerContainer);
 
-    const spacer = document.createElement('div');
-    spacer.classList.add('py-5');
-    document.body.appendChild(spacer);
+	document.getElementById('lang-en').addEventListener('click', (e) => {
+        e.preventDefault();
+        changeLanguage('en');
+    });
+    document.getElementById('lang-fr').addEventListener('click', (e) => {
+        e.preventDefault();
+        changeLanguage('fr');
+    });
+    document.getElementById('lang-es').addEventListener('click', (e) => {
+        e.preventDefault();
+        changeLanguage('es');
+    });
 }
 
-// Fonction pour rediriger vers un site aléatoire
-function redirectRandomSite() {
-    const sites = [
-        'https://fr.wikihow.com/surmonter-une-addiction-aux-%C3%A9crans',
-        'https://rickroll.it/rickroll.mp4',
-        'https://madebyqwerty.itch.io/',
-        'https://42lausanne.ch'
-    ];
-    const randomIndex = Math.floor(Math.random() * sites.length);
-    window.open(sites[randomIndex], '_blank');
-}
+function changeLanguage(lang = null) {
+    if (lang) {
+        localStorage.setItem('selectedLanguage', lang);
+    }
 
-function changeLanguage() {
-    // Récupérer la langue enregistrée, ou utiliser 'en' par défaut
     const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
 
     document.querySelectorAll('[data-translate]').forEach(element => {
         const key = element.getAttribute('data-translate');
 
-        if (element.tagName === 'INPUT' && (element.type === 'text' || element.type === 'email' || element.type === 'password')) {
-            // Modifier le placeholder pour les champs d'entrée (text, email, password)
-            element.placeholder = translations[selectedLanguage][key];
-        } else if (element.tagName === 'OPTION') {
-            // Modifier le texte des options du select
-            element.textContent = translations[selectedLanguage][key];
-        } else if (key === 'player_title') {
-            // Traiter les titres de joueurs, par exemple "Player 1", "Player 2", etc.
-            const playerNumber = element.textContent.match(/\d+$/); // Récupérer le numéro du joueur
-            element.textContent = translations[selectedLanguage][key] + (playerNumber ? ` ${playerNumber[0]}` : '');
-        } else if (element.tagName === 'LABEL' && element.querySelector('span')) {
-            // Traiter les labels avec enfants (comme des spans avec des valeurs dynamiques)
-            const spanElement = element.querySelector('span');
-            element.childNodes[0].textContent = translations[selectedLanguage][key] + ' ';
-            if (spanElement) {
-                spanElement.textContent = spanElement.textContent; // Laisser les valeurs dynamiques inchangées
+        if (translations[selectedLanguage] && translations[selectedLanguage][key]) {
+            if (element.tagName === 'INPUT' && (element.type === 'text' || element.type === 'email' || element.type === 'password')) {
+                element.placeholder = translations[selectedLanguage][key];
+            } else if (element.tagName === 'OPTION') {
+                element.textContent = translations[selectedLanguage][key];
+            } else if (key === 'player_title') {
+                const playerNumber = element.textContent.match(/\d+$/);
+                element.textContent = translations[selectedLanguage][key] + (playerNumber ? ` ${playerNumber[0]}` : '');
+            } else if (element.tagName === 'LABEL' && element.querySelector('span')) {
+                const spanElement = element.querySelector('span');
+                element.childNodes[0].textContent = translations[selectedLanguage][key] + ' ';
+                if (spanElement) {
+                    spanElement.textContent = spanElement.textContent;
+                }
+            } else {
+                element.textContent = translations[selectedLanguage][key];
             }
-        } else {
-            // Autres éléments simples
-            element.textContent = translations[selectedLanguage][key];
         }
+    });
+
+    document.querySelectorAll('#language_selector_container a').forEach(link => {
+        link.classList.toggle('text-primary', link.id === `lang-${selectedLanguage}`);
+        link.classList.toggle('text-white', link.id !== `lang-${selectedLanguage}`);
     });
 }
 
-// Objet de traduction
 const translations = {
     en: {
         "footer_names": "amonbaro | cmansey | mdanchev | abarras",
@@ -151,7 +162,35 @@ const translations = {
         "same_key_error": "cannot have the same key for both Up and Down.",
         "key_already_assigned": "The key is already assigned to another player.",
         "back_to_menu": "Back to Menu",
-        "go_to_settings": "Go to Settings"
+        "go_to_settings": "Go to Settings",
+
+        "login_page_title": "Login",
+        "login_title": "Login",
+        "email_label": "Email",
+        "email_placeholder": "Enter your email",
+        "password_label": "Password",
+        "password_placeholder": "Enter your password",
+        "submit_button": "Submit",
+        "register_page_title": "Register",
+        "register_title": "Register",
+        "name_label": "Name :",
+        "first_name_placeholder": "First",
+        "last_name_placeholder": "Last",
+        "email_label": "Email :",
+        "email_placeholder": "name@example.com",
+        "username_label": "Username :",
+        "username_placeholder": "Enter your username",
+        "password_label": "Password :",
+        "password_placeholder": "Enter your password",
+        "password_help": "Must contain at least 12 characters<br>With : uppercase, lowercase, numeric and special character<br>Can't be : common word, your first name, last name or email",
+        "confirm_password_label": "Confirm password :",
+        "confirm_password_placeholder": "Confirm your password",
+        "profile_photo_label": "Profile Photo :",
+        "profile_photo_placeholder": "Choose a profile photo",
+        "profile_preview_alt": "Profile Preview",
+        "submit_button": "Submit",
+        "select_file_button": "Choose File",
+        "no_file_selected": "No file selected"
     },
     fr: {
         "footer_names": "amonbaro | cmansey | mdanchev | abarras",
@@ -196,7 +235,35 @@ const translations = {
         "same_key_error": "ne peut pas avoir la même touche pour Haut et Bas.",
         "key_already_assigned": "La touche est déjà assignée à un autre joueur.",
         "back_to_menu": "Retour au menu",
-        "go_to_settings": "Aller aux paramètres"
+        "go_to_settings": "Aller aux paramètres",
+
+        "login_page_title": "Connexion",
+        "login_title": "Connexion",
+        "email_label": "E-mail",
+        "email_placeholder": "Entrez votre e-mail",
+        "password_label": "Mot de passe",
+        "password_placeholder": "Entrez votre mot de passe",
+        "submit_button": "Valider",
+        "register_page_title": "Inscription",
+        "register_title": "Inscription",
+        "name_label": "Nom :",
+        "first_name_placeholder": "Prénom",
+        "last_name_placeholder": "Nom",
+        "email_label": "E-mail :",
+        "email_placeholder": "Entrez votre e-mail",
+        "username_label": "Nom d'utilisateur :",
+        "username_placeholder": "Entrez votre nom d'utilisateur",
+        "password_label": "Mot de passe :",
+        "password_placeholder": "Entrez votre mot de passe",
+        "password_help": "Doit contenir au moins 12 caractères<br>Avec : majuscule, minuscule, chiffre et caractère spécial<br>Ne peut pas être : mot commun, votre prénom, nom ou e-mail",
+        "confirm_password_label": "Confirmez le mot de passe :",
+        "confirm_password_placeholder": "Confirmez votre mot de passe",
+        "profile_photo_label": "Photo de profil :",
+        "profile_photo_placeholder": "Choisissez une photo de profil",
+        "profile_preview_alt": "Aperçu du profil",
+        "submit_button": "Valider",
+        "select_file_button": "Choisir un fichier",
+        "no_file_selected": "Aucun fichier sélectionné"
     },
     es: {
         "footer_names": "amonbaro | cmansey | mdanchev | abarras",
@@ -241,33 +308,39 @@ const translations = {
         "same_key_error": "no puede tener la misma tecla para Arriba y Abajo.",
         "key_already_assigned": "La tecla ya está asignada a otro jugador.",
         "back_to_menu": "Volver al menú",
-        "go_to_settings": "Ir a configuración"
+        "go_to_settings": "Ir a configuración",
+
+        "login_page_title": "Iniciar sesión",
+        "login_title": "Iniciar sesión",
+        "email_label": "Correo electrónico",
+        "email_placeholder": "Ingrese su correo electrónico",
+        "password_label": "Contraseña",
+        "password_placeholder": "Ingrese su contraseña",
+        "submit_button": "Enviar",
+        "register_page_title": "Registro",
+        "register_title": "Registro",
+        "name_label": "Nombre :",
+        "first_name_placeholder": "Nombre",
+        "last_name_placeholder": "Apellido",
+        "email_label": "Correo electrónico :",
+        "email_placeholder": "Ingrese su correo electrónico",
+        "username_label": "Nombre de usuario :",
+        "username_placeholder": "Ingrese su nombre de usuario",
+        "password_label": "Contraseña :",
+        "password_placeholder": "Ingrese su contraseña",
+        "password_help": "Debe contener al menos 12 caracteres<br>Con : mayúscula, minúscula, número y carácter especial<br>No puede ser : palabra común, su nombre, apellido o correo electrónico",
+        "confirm_password_label": "Confirme la contraseña :",
+        "confirm_password_placeholder": "Confirme su contraseña",
+        "profile_photo_label": "Foto de perfil :",
+        "profile_photo_placeholder": "Elija una foto de perfil",
+        "profile_preview_alt": "Vista previa del perfil",
+        "submit_button": "Enviar",
+        "select_file_button": "Seleccionar archivo",
+        "no_file_selected": "Ningún archivo seleccionado"
     }    
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Ajouter le footer uniquement si nécessaire
     addFooter();
-
-    // Charger la langue sauvegardée ou utiliser 'en' par défaut
-    const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
-
-    // Si un sélecteur de langue est présent, le mettre à jour et ajouter l'événement de changement
-    const languageSelector = document.getElementById('languageSelector');
-    if (languageSelector) {
-        languageSelector.value = savedLanguage;
-        languageSelector.addEventListener('change', () => {
-            localStorage.setItem('selectedLanguage', languageSelector.value);
-            changeLanguage();
-        });
-    }
-
-    // Appliquer la langue sauvegardée à tous les éléments traduisibles
     changeLanguage();
-
-    // Appliquer la langue toutes les 100 ms pour les éléments ajoutés dynamiquement
-    setInterval(changeLanguage, 10);
 });
-
-
-
