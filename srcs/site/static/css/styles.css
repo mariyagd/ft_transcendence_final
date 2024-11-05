@@ -164,7 +164,16 @@
 	display: none;
 }
 
-.profile-photo-register
+.profile-photo-wrapper-nav
+{
+    position: relative;
+    width: 50px;
+    height: 50px;
+    border-radius: 100%;
+    overflow: hidden;
+}
+
+.profile-photo-nav
 {
     width: 100%;
     height: 100%;
