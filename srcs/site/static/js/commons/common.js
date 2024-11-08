@@ -191,7 +191,7 @@ const translations = {
         "game_mode": "Mode de jeu :",
         "game_mode_versus": "Face-à-face",
         "game_mode_tournament": "Tournoi",
-        "game_mode_last_man_standing": "Dernier en lice",
+        "game_mode_last_man_standing": "Dernier en liste",
         "game_mode_brick_breaker": "Casse-briques",
         "add_player": "Ajouter un joueur",
         "remove_player": "Supprimer un joueur",
