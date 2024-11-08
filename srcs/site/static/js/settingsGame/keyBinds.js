@@ -1,4 +1,4 @@
-export function handleKeyBindings(index, mode){
+export function handleKeyBindings(index, mode) {
 	document.getElementById(`player${index}Up`).addEventListener('keydown', function(event) {
 		event.preventDefault();
 		const key = event.key;

@@ -93,20 +93,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const password = document.getElementById('password').value;
         const password2 = document.getElementById('password2').value;
 
-        if (firstName.value.trim() === '') {
-            showError(firstName, 'First name is required.');
+        // Nom et prénom
+        const namePattern = /^[A-Z][a-zA-Z -]{0,49}$/;
+        if (!namePattern.test(firstName.value.trim())) {
+            showError(firstName, 'First name must start with a capital letter.');
             isValid = false;
         } else {
             clearError(firstName);
         }
 
-        if (lastName.value.trim() === '') {
-            showError(lastName, 'Last name is required.');
+        if (!namePattern.test(lastName.value.trim())) {
+            showError(lastName, 'Last name must start with a capital letter.');
             isValid = false;
         } else {
             clearError(lastName);
         }
 
+        // Adresse email
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email.value)) {
             showError(email, 'Invalid email address.');
@@ -115,17 +118,21 @@ document.addEventListener('DOMContentLoaded', () => {
             clearError(email);
         }
 
-        if (username.value.trim() === '') {
-            showError(username, 'Username is required.');
+        // Nom d'utilisateur
+        const usernamePattern = /^[a-zA-Z0-9@#_-]{8}$/;
+        if (!usernamePattern.test(username.value.trim())) {
+            showError(username, 'Username can contain 8 characters with only letters, numbers, and - _ @ #');
             isValid = false;
         } else {
             clearError(username);
         }
 
+        // Mot de passe
         if (!validatePassword(password, firstName.value, lastName.value, email.value, username.value)) {
             isValid = false;
         }
 
+        // Confirmation du mot de passe
         if (password !== password2) {
             showError(document.getElementById('password2'), 'Passwords do not match.');
             isValid = false;
