@@ -104,6 +104,8 @@ document.addEventListener('DOMContentLoaded', async () => {
             profilePhoto.src = result.profile_photo; // Met à jour l'image affichée
             const editProfilePhotoModal = bootstrap.Modal.getInstance(document.getElementById('editProfilePhotoModal'));
             editProfilePhotoModal.hide();
+
+			location.reload();
         } catch (error) {
             console.error('Erreur lors de la mise à jour de la photo de profil:', error);
         }
@@ -125,10 +127,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                 throw new Error(`Erreur lors de la suppression de la photo de profil: ${response.status}`);
             }
 
-            profilePhoto.src = ''; // Retirer l'image affichée
+            profilePhoto.src = '../../profile_photos/default/default-user-profile-photo.jpg';
             document.getElementById('newProfilePhoto').value = ''; // Réinitialiser le champ d'upload
             const editProfilePhotoModal = bootstrap.Modal.getInstance(document.getElementById('editProfilePhotoModal'));
             editProfilePhotoModal.hide();
+
+			location.reload();
         } catch (error) {
             console.error('Erreur lors de la suppression de la photo de profil:', error);
         }
