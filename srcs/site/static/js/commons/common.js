@@ -1,30 +1,36 @@
-function showMessage(message, type = 'success', containerId = 'messageContainer')
-{
+function showMessage(message, type = 'success', containerId = 'messageContainer') {
+    // Si le message est un objet JSON, extraire le texte d'erreur
+    if (typeof message === 'string') {
+        try {
+            const parsedMessage = JSON.parse(message);
+            // Vérifier si l'objet contient un champ "detail" pour afficher un message spécifique
+            message = parsedMessage.detail || JSON.stringify(parsedMessage);
+        } catch (e) {
+            // Si la chaîne n'est pas un JSON, on l'utilise tel quel
+        }
+    }
+
     const messageContainer = document.getElementById(containerId);
-    if (messageContainer)
-	{
-        messageContainer.innerHTML =
-		`
+    if (messageContainer) {
+        messageContainer.innerHTML = `
             <div class="alert alert-${type}" role="alert">
                 ${message}
             </div>
         `;
-        setTimeout(() =>
-		{
+        setTimeout(() => {
             messageContainer.innerHTML = '';
-        }, 2000);
+        }, 3000); // 1000 = 1sec
     }
 }
 
-function checkForMessage(containerId = 'messageContainer')
-{
+function checkForMessage(containerId = 'messageContainer') {
     const successMessage = localStorage.getItem('successMessage');
-    if (successMessage)
-	{
+    if (successMessage) {
         showMessage(successMessage, 'success', containerId);
         localStorage.removeItem('successMessage');
     }
 }
+
 
 function addFooter() {
     if (document.body.hasAttribute('data-no-footer')) {

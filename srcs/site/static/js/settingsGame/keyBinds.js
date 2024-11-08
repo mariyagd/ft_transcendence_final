@@ -90,7 +90,7 @@ export function handleKeyBindings(index, mode){
 				}
 			}
 		} else {
-			alert("Only lowercase letters, numbers, and arrow keys are allowed.");
+			showMessage("Only lowercase letters, numbers, and arrow keys are allowed.", "warning");
 		}
 	});
 }

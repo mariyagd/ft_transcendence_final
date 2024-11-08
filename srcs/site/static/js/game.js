@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     } else {
         alert("No game options found!");
+		window.location.href = './settingsGame.html';
     }
 });
 

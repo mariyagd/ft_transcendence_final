@@ -68,7 +68,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 		userEmail.textContent = profileData.email;
     } catch (error) {
         console.error('Erreur lors de la récupération des données du profil:', error);
-        alert('Une erreur s\'est produite. Vérifiez la console pour plus de détails.');
         window.location.href = 'login.html';
     }
 
@@ -107,7 +106,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             editProfilePhotoModal.hide();
         } catch (error) {
             console.error('Erreur lors de la mise à jour de la photo de profil:', error);
-            alert('Erreur lors de la mise à jour de la photo de profil. Veuillez vérifier la console.');
         }
     });
 
@@ -133,7 +131,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             editProfilePhotoModal.hide();
         } catch (error) {
             console.error('Erreur lors de la suppression de la photo de profil:', error);
-            alert('Erreur lors de la suppression de la photo de profil. Veuillez vérifier la console.');
         }
     });
 
@@ -169,11 +166,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 }),
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Erreur lors du changement de mot de passe: ${response.status} ${errorText}`);
-            }
-
+			if (!response.ok) {
+				const errorData = await response.json();
+			
+				// Rassemble les messages d'erreur dans un format lisible
+				const errorMessages = Object.values(errorData)
+					.flat()
+					.join('<br>');
+			
+				passwordChangeMessage.innerHTML = `<div class="alert alert-danger">${errorMessages}</div>`;
+				return;
+			}
+			
             const result = await response.json();
             passwordChangeMessage.innerHTML = `<div class="alert alert-success">${result.detail}</div>`;
             changePasswordForm.reset();
@@ -224,10 +228,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                 body: JSON.stringify(updatedData),
             });
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`Erreur lors de la mise à jour du profil : ${response.status} ${errorText}`);
-            }
+			if (!response.ok) {
+				const errorData = await response.json();
+			
+				// Crée un tableau d'erreurs en itérant sur chaque champ retourné par l'API
+				const errorMessages = Object.values(errorData)
+					.flat()  // Rassemble les messages dans un seul tableau
+					.join('<br>');  // Sépare chaque message par un saut de ligne
+			
+				profileEditMessage.innerHTML = `<div class="alert alert-danger">${errorMessages}</div>`;
+				return;
+			}
+			
 
             const result = await response.json();
 
@@ -240,9 +252,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Fermer la modale
             const editProfileModal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
             editProfileModal.hide();
+			profileEditMessage.innerHTML = '';
         } catch (error) {
             console.error('Erreur lors de la mise à jour du profil:', error);
-            alert('Une erreur est survenue lors de la mise à jour du profil. Veuillez vérifier la console pour plus de détails.');
+			profileEditMessage.innerHTML = '<div class="alert alert-danger">Une erreur est survenue lors de la mise à jour du profil.</div>';
         }
     });
 });
