@@ -1,6 +1,6 @@
 import { addPlayerField } from './addPlayerField.js';
-
 import { initializeStartGame } from './startGame.js';
+import { clearUsedKeys } from './keyBinds.js';
 
 const MIN_PLAYERS = 2;
 const VERSUS_MAX = 4;
@@ -39,6 +39,8 @@ function updateOptions() {
     const maxScoreField = document.getElementById('maxScore');
     document.getElementById('player-controls-wrapper').innerHTML = ''; 
     document.getElementById('player-key-wrapper').innerHTML = ''; 
+
+	clearUsedKeys();
 
     let initialPlayers = MIN_PLAYERS;
     let maxPlayers = getMaxPlayersForMode(mode);
