@@ -61,10 +61,14 @@ down-rmi:
 	@docker-compose -f $(COMPOSE_FILE) down --rmi all --volumes
 
 clean: down
+	@echo "${GREEN}\nSUPPRIMANT LE DOSSIER BUILD DE TRUFFLE ${NC}"
+	sudo rm -rf ./srcs/requirements/truffle/build
 
 # Target to remove all resources and data
 fclean: down-rmi
 	@$(MAKE) dangling
+	@echo "${GREEN}\nSUPPRIMANT LE DOSSIER BUILD DE TRUFFLE ${NC}"
+	sudo rm -rf ./srcs/requirements/truffle/build  # Ajout de la suppression du dossier build dans fclean
 	@if [ -d "${POSTGRES_DIR}/" ]; then \
   		echo "${GREEN}\nREMOVING SAVED DATA IN HOST MACHINE ${NC}"; \
   		sudo chown -R ${USERNAME}:${GROUPENAME} ${POSTGRES_DIR}/; \

@@ -1,3 +1,77 @@
+import { terminerTournoi } from '../../game/js/mods/tournament.js';
+let tournamentContract;
+let web3Initialized = false;
+
+// Fonction pour charger Web3
+async function chargerWeb3() {
+    return new Promise((resolve, reject) => {
+        if (typeof window.Web3 !== 'undefined') {
+            console.log('Web3 est déjà chargé.');
+            resolve();
+            return;
+        }
+        // Utilisation de window.location.origin pour le domaine dynamique
+        const domain = window.location.origin;
+        const script = document.createElement('script');
+        script.src = `${domain}/static/js/web3.min.js`;
+
+        script.onload = () => {
+            if (typeof window.Web3 !== 'undefined') {
+                console.log('Web3 chargé avec succès');
+                resolve();
+            } else {
+                reject(new Error('Web3 n\'a pas pu être chargé'));
+            }
+        };
+
+        script.onerror = () => {
+            reject(new Error('Échec du chargement de Web3'));
+        };
+
+        document.head.appendChild(script);
+    });
+}
+// Fonction pour initialiser Web3 et le contrat
+async function initWeb3() {
+    if (web3Initialized) {
+        console.log('Web3 est déjà initialisé.');
+        return;
+    }
+    await chargerWeb3();
+
+    // Utilisation de window.location.origin pour que l'URL s'ajuste au domaine courant
+    const ganacheUrl = `${window.location.origin}/ganache/`;
+    window.web3 = new Web3(new Web3.providers.HttpProvider(ganacheUrl));
+
+    const domain = window.location.origin;
+    const tournamentContractJSON = await fetch(`${domain}/contracts/TournamentScore.json`).then(response => response.json());
+
+    const contractABI = tournamentContractJSON.abi;
+    const networkId = Object.keys(tournamentContractJSON.networks)[0];
+    const contractAddress = tournamentContractJSON.networks[networkId]?.address;
+
+    if (!contractAddress) throw new Error('Adresse du contrat non trouvée.');
+    tournamentContract = new web3.eth.Contract(contractABI, contractAddress);
+    web3Initialized = true;
+    console.log('Contrat initialisé:', tournamentContract);
+}
+
+// Fonction pour enregistrer le gagnant sur la blockchain
+async function enregistrerGagnantSurBlockchain(gagnant) {
+    try {
+        await initWeb3();
+        const compte = (await web3.eth.getAccounts())[0];
+        const txReceipt = await tournamentContract.methods.enregistrerGagnant(gagnant).send({ from: compte, gas: 500000 });
+        const block = await web3.eth.getBlock(txReceipt.blockNumber);
+        return new Date(block.timestamp * 1000);
+    } catch (error) {
+        console.error('Erreur lors de l\'enregistrement du gagnant sur la blockchain', error);
+        return null;
+    }
+}
+
+export { tournamentContract };
+
 function getGameModeCode(mode) {
     switch (mode.toLowerCase()) {
         case 'versus':
@@ -133,7 +207,7 @@ export function registerGameWinner(winnerAlias) {
     }
 }
 
-export function registerTournamentWinner(finalWinnerAlias) {
+export async function registerTournamentWinner(finalWinnerAlias) {
     const sessionData = JSON.parse(localStorage.getItem('gameSession'));
 
     if (sessionData) {
@@ -141,5 +215,15 @@ export function registerTournamentWinner(finalWinnerAlias) {
         delete sessionData.winner2;
 
         sendTournamentSessionToAPI(sessionData);  // Appeler l'API de tournoi
+
+		// Enregistrer le gagnant du tournoi sur la blockchain
+		const date = await enregistrerGagnantSurBlockchain(finalWinnerAlias);
+		if (date) {
+			console.log(`Gagnant enregistré sur la blockchain le ${date}`);
+
+			// Appeler terminerTournoi uniquement pour afficher l'historique
+			const wins = { [finalWinnerAlias]: 1 };
+			await terminerTournoi(wins);
+		}
     }
 }

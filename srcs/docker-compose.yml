@@ -4,7 +4,7 @@ services:
     image: postgres:custom
     container_name: postgres
     expose:
-      - "5432:5432"
+      - "5432"
     networks:
       - pong_network
     env_file:
@@ -41,7 +41,7 @@ services:
     depends_on:
       - postgres
     volumes:
-      - profile_photos:/usr/src/app/media/profile_photos
+    - ./site/profile_photos:/usr/src/app/media/profile_photos
     restart: always
 
   nginx:
@@ -57,11 +57,15 @@ services:
       - .env
     depends_on:
       - auth
+      - ganache
+    links:
+      - ganache
     volumes:
-      - static_files:/var/www/html/static
-      - media_files:/var/www/html/media
-      - profile_photos:/var/www/html/profile_photos
-      - errors:/var/www/html/errors
+      - ./site/static:/var/www/html/static
+      - ./site/media:/var/www/html/media
+      - ./site/profile_photos:/var/www/html/profile_photos
+      - ./site/errors:/var/www/html/errors
+      - ./requirements/truffle/build/contracts:/var/www/html/contracts
     restart: always
 
   cron:
@@ -73,6 +77,29 @@ services:
     depends_on:
       - auth
     restart: always
+
+  ganache:
+    image: trufflesuite/ganache-cli
+    container_name: ganache
+    ports:
+      - "8545:8545"
+    networks:
+      - pong_network
+    command: ["ganache-cli", "-h", "0.0.0.0", "-p", "8545", "-i", "5777", "-l", "12000000"]
+    restart: always
+
+  truffle:
+    build: ./requirements/truffle
+    container_name: truffle
+    depends_on:
+      - ganache
+    networks:
+      - pong_network
+    volumes:
+      - ./requirements/truffle:/app
+    working_dir: /app
+    command: ["sh", "-c", "deploy-if-needed.sh && while :; do sleep 2073600; done"]
+    restart: "no"
 
 networks:
   pong_network:
