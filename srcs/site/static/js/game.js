@@ -26,6 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
             case 'es':
                 languageIndex = 2;
                 break;
+                case 'bg':
+                languageIndex = 3;
+                break;
             default:
                 languageIndex = 0;
         }
