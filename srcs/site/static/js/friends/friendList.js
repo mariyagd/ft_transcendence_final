@@ -101,6 +101,8 @@ function showFriendDetails(friendEntry) {
     // Charger l'historique des parties
     fetchFriendMatchHistory(friend.id);
 
+	document.getElementById('removeFriendBtn').setAttribute('data-friend-id', friend.id);
+
     const friendDetailsModal = new bootstrap.Modal(document.getElementById('friendDetailsModal'));
     friendDetailsModal.show();
 }
@@ -248,8 +250,7 @@ async function removeFriend(friendId) {
             throw new Error(`Error removing friend: ${response.status} ${errorText}`);
         }
 
-		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
-
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
         let friendDeletedMessage;
 
         if (selectedLanguage === 'fr') {
@@ -297,3 +298,4 @@ document.getElementById('removeFriendBtn').addEventListener('click', async (even
         }
     }
 });
+
