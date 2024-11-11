@@ -9,6 +9,45 @@ export function initializeStartGame() {
 
         let allFieldsValid = true;
 
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        // Initialisation des messages pour chaque langue
+        let messages = {};
+
+        if (selectedLanguage === 'fr') {
+            messages = {
+                playerFieldsMessage: (i) => `Le joueur ${i + 1} doit avoir un nom et des touches assignées !`,
+                nameAlreadyUsedMessage: (playerName) => `Le nom '${playerName}' est déjà utilisé par un autre joueur. Veuillez choisir un nom différent.`,
+                sameKeyMessage: (i) => `Le joueur ${i + 1} ne peut pas avoir la même touche pour Haut et Bas.`,
+                upKeyUsedMessage: (upKey) => `La touche '${upKey}' est déjà assignée à un autre joueur.`,
+                downKeyUsedMessage: (downKey) => `La touche '${downKey}' est déjà assignée à un autre joueur.`
+            };
+        } else if (selectedLanguage === 'es') {
+            messages = {
+                playerFieldsMessage: (i) => `¡El jugador ${i + 1} debe tener un nombre y teclas asignadas!`,
+                nameAlreadyUsedMessage: (playerName) => `El nombre '${playerName}' ya está en uso por otro jugador. Por favor elija un nombre diferente.`,
+                sameKeyMessage: (i) => `El jugador ${i + 1} no puede tener la misma tecla para Arriba y Abajo.`,
+                upKeyUsedMessage: (upKey) => `La tecla '${upKey}' ya está asignada a otro jugador.`,
+                downKeyUsedMessage: (downKey) => `La tecla '${downKey}' ya está asignada a otro jugador.`
+            };
+        } else if (selectedLanguage === 'bg') {
+            messages = {
+                playerFieldsMessage: (i) => `Играч ${i + 1} трябва да има име и зададени клавиши!`,
+                nameAlreadyUsedMessage: (playerName) => `Името '${playerName}' вече се използва от друг играч. Моля, изберете различно име.`,
+                sameKeyMessage: (i) => `Играч ${i + 1} не може да има един и същ клавиш за горе и долу.`,
+                upKeyUsedMessage: (upKey) => `Клавишът '${upKey}' вече е зададен на друг играч.`,
+                downKeyUsedMessage: (downKey) => `Клавишът '${downKey}' вече е зададен на друг играч.`
+            };
+        } else {
+            messages = {
+                playerFieldsMessage: (i) => `Player ${i + 1} must have a name and keys assigned!`,
+                nameAlreadyUsedMessage: (playerName) => `The name '${playerName}' is already used by another player. Please choose a different name.`,
+                sameKeyMessage: (i) => `Player ${i + 1} cannot have the same key for both Up and Down.`,
+                upKeyUsedMessage: (upKey) => `The key '${upKey}' is already assigned to another player.`,
+                downKeyUsedMessage: (downKey) => `The key '${downKey}' is already assigned to another player.`
+            };
+        }
+
         for (let i = 0; i < playerFields.length; i++) {
             const playerName = document.getElementById(`player${i}`).value.trim();
 
@@ -22,31 +61,31 @@ export function initializeStartGame() {
 
             if (!playerName || (mode !== 'tournament' && (!upKey || !downKey))) {
                 allFieldsValid = false;
-                showMessage(`Player ${i + 1} must have a name and keys assigned!`, "warning");
+                showMessage(messages.playerFieldsMessage(i), "warning");
                 break;
             }
 
             if (usedNames.has(playerName)) {
                 allFieldsValid = false;
-                showMessage(`The name '${playerName}' is already used by another player. Please choose a different name.`, "warning");
+                showMessage(messages.nameAlreadyUsedMessage(playerName), "warning");
                 break;
             }
 
             if (mode !== 'tournament' || i < 2) {
                 if (upKey === downKey) {
                     allFieldsValid = false;
-                    showMessage(`Player ${i + 1} cannot have the same key for both Up and Down.`, "warning");
+                    showMessage(messages.sameKeyMessage(i), "warning");
                     break;
                 }
 
                 if (usedKeys.has(upKey)) {
                     allFieldsValid = false;
-                    showMessage(`The key '${upKey}' is already assigned to another player.`, "warning");
+                    showMessage(messages.upKeyUsedMessage(upKey), "warning");
                     break;
                 }
                 if (usedKeys.has(downKey)) {
                     allFieldsValid = false;
-                    showMessage(`The key '${downKey}' is already assigned to another player.`, "warning");
+                    showMessage(messages.downKeyUsedMessage(downKey), "warning");
                     break;
                 }
 
@@ -56,6 +95,7 @@ export function initializeStartGame() {
 
             usedNames.add(playerName);
         }
+
 
 		if (allFieldsValid) {
 			const playerNames = [];

@@ -252,3 +252,23 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });    
 });
+
+document.getElementById('selectPhotoButton').addEventListener('click', () => {
+    document.getElementById('profile_photo').click();
+});
+
+// Pour mettre à jour l'aperçu de la photo une fois sélectionnée
+document.getElementById('profile_photo').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        // Mise à jour du nom du fichier dans l'élément 'fileNameDisplay'
+        document.getElementById('fileNameDisplay').textContent = file.name;
+
+        // Mise à jour de l'aperçu de la photo
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('profile_preview').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});

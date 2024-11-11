@@ -48,7 +48,7 @@ export function handleKeyBindings(index, mode) {
 			}
 		} else {
 			//alert("Only lowercase letters, numbers, and arrow keys are allowed.");
-			localStorage.setItem('successMessage', 'Déconnexion réussie !'); 
+			localStorage.setItem('successMessage', 'Disconnection successful!'); 
 		}
 	});
 

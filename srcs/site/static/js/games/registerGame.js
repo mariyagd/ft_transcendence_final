@@ -105,12 +105,12 @@ async function sendGameSessionToAPI(sessionData) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de l'enregistrement de la partie: ${response.status} ${errorText}`);
+            throw new Error(`Error saving game: ${response.status} ${errorText}`);
         }
 
-        console.log('Partie enregistrée avec succès');
+        console.log('Game saved successfully');
     } catch (error) {
-        console.error('Erreur lors de l\'enregistrement de la partie :', error);
+        console.error('Error saving game :', error);
     }
 }
 
@@ -140,12 +140,12 @@ async function sendTournamentSessionToAPI(sessionData) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de l'enregistrement du tournoi: ${response.status} ${errorText}`);
+            throw new Error(`Error saving tournament: ${response.status} ${errorText}`);
         }
 
-        console.log('Tournoi enregistré avec succès');
+        console.log('Tournament saved successfully');
     } catch (error) {
-        console.error('Erreur lors de l\'enregistrement du tournoi :', error);
+        console.error('Error saving tournament :', error);
     }
 }
 

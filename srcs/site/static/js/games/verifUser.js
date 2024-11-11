@@ -17,7 +17,22 @@ document.addEventListener('DOMContentLoaded', () => {
 		};
 
         if (!email || !password) {
-            showMessage("Veuillez entrer votre email et mot de passe.", "warning");
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let enterEmailPasswordMessage;
+
+            if (selectedLanguage === 'fr') {
+                enterEmailPasswordMessage = "Veuillez entrer votre email et mot de passe.";
+            } else if (selectedLanguage === 'es') {
+                enterEmailPasswordMessage = "Por favor, ingrese su correo electrónico y contraseña.";
+            } else if (selectedLanguage === 'bg') {
+                enterEmailPasswordMessage = "Моля, въведете вашия имейл и парола.";
+            } else {
+                enterEmailPasswordMessage = "Please enter your email and password.";
+            }
+
+            showMessage(enterEmailPasswordMessage, "warning");
+
             return;
         }
 
@@ -35,14 +50,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (!response.ok) {
                 const errorText = await response.text();
-                throw new Error(`Erreur lors de la vérification de l'utilisateur: ${response.status} ${errorText}`);
+                throw new Error(`Error verifying user: ${response.status} ${errorText}`);
             }
 
             const userData = await response.json();
 
             // Vérification si l'utilisateur est déjà utilisé pour un autre joueur
             if (verifiedUsers.has(userData.username)) {
-				showMessage("Cet utilisateur est déjà connecté pour un autre joueur.", "warning");
+				const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+                let userAlreadyLoggedInMessage;
+
+                if (selectedLanguage === 'fr') {
+                    userAlreadyLoggedInMessage = "Cet utilisateur est déjà connecté pour un autre joueur.";
+                } else if (selectedLanguage === 'es') {
+                    userAlreadyLoggedInMessage = "Este usuario ya está conectado para otro jugador.";
+                } else if (selectedLanguage === 'bg') {
+                    userAlreadyLoggedInMessage = "Този потребител вече е влязъл за друг играч.";
+                } else {
+                    userAlreadyLoggedInMessage = "This user is already logged in for another player.";
+                }
+
+                showMessage(userAlreadyLoggedInMessage, "warning");
+
                 return;
             }
 
@@ -68,8 +98,22 @@ document.addEventListener('DOMContentLoaded', () => {
             loginModal.hide();
 
         } catch (error) {
-            console.error('Erreur lors de la connexion:', error);
-			showMessage("Une erreur s\'est produite lors de la connexion. Vérifiez vos identifiants.", "warning");
+            console.error('Error connecting:', error);
+			const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let loginErrorMessage;
+
+            if (selectedLanguage === 'fr') {
+                loginErrorMessage = "Une erreur s'est produite lors de la connexion. Vérifiez vos identifiants.";
+            } else if (selectedLanguage === 'es') {
+                loginErrorMessage = "Se produjo un error durante el inicio de sesión. Verifique sus credenciales.";
+            } else if (selectedLanguage === 'bg') {
+                loginErrorMessage = "Възникна грешка при влизането. Проверете вашите идентификационни данни.";
+            } else {
+                loginErrorMessage = "An error occurred during login. Please check your credentials.";
+            }
+
+            showMessage(loginErrorMessage, "warning");
         }
     };
 
@@ -113,7 +157,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const playerName = inputField.value.trim();
 
             if (usedUsernames.has(playerName)) {
-				showMessage("e nom est déjà utilisé par un joueur vérifié. Veuillez en choisir un autre.", "warning");
+				const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+                let nameAlreadyUsedMessage;
+
+                if (selectedLanguage === 'fr') {
+                    nameAlreadyUsedMessage = "Ce nom est déjà utilisé par un joueur vérifié. Veuillez en choisir un autre.";
+                } else if (selectedLanguage === 'es') {
+                    nameAlreadyUsedMessage = "Este nombre ya está en uso por un jugador verificado. Por favor, elija otro.";
+                } else if (selectedLanguage === 'bg') {
+                    nameAlreadyUsedMessage = "Това име вече се използва от проверен играч. Моля, изберете друго.";
+                } else {
+                    nameAlreadyUsedMessage = "This name is already used by a verified player. Please choose another one.";
+                }
+
+                showMessage(nameAlreadyUsedMessage, "warning");
+
                 inputField.value = ''; // Effacer le champ si le nom est déjà utilisé
             }
         }

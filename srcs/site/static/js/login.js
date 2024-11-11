@@ -1,5 +1,39 @@
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('loginForm');
+    const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+    // Initialisation des messages pour chaque langue
+    let messages = {};
+
+    if (selectedLanguage === 'fr') {
+        messages = {
+            connectionFailed: (errorMessage) => `Échec de la connexion : ${errorMessage}`,
+            noTokens: "Échec de la connexion : aucun token reçu.",
+            retryError: "Une erreur s'est produite lors de la connexion. Veuillez réessayer.",
+            successMessage: "Connexion réussie !"
+        };
+    } else if (selectedLanguage === 'es') {
+        messages = {
+            connectionFailed: (errorMessage) => `Error de conexión: ${errorMessage}`,
+            noTokens: "Error de conexión: no se recibió ningún token.",
+            retryError: "Ocurrió un error durante la conexión. Inténtalo de nuevo.",
+            successMessage: "¡Conexión exitosa!"
+        };
+    } else if (selectedLanguage === 'bg') {
+        messages = {
+            connectionFailed: (errorMessage) => `Неуспешна връзка: ${errorMessage}`,
+            noTokens: "Неуспешна връзка: не е получен токен.",
+            retryError: "Възникна грешка при свързването. Опитайте отново.",
+            successMessage: "Успешно влизане!"
+        };
+    } else {
+        messages = {
+            connectionFailed: (errorMessage) => `Connection failed: ${errorMessage}`,
+            noTokens: "Connection failed: no tokens received.",
+            retryError: "An error occurred during connection. Please try again.",
+            successMessage: "Login successful!"
+        };
+    }
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -18,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                let errorMessage = 'Erreur lors de la connexion.';
+                let errorMessage = 'Error connecting.';
                 
                 try {
                     // Tenter de parser la réponse en JSON pour obtenir le message d'erreur
@@ -29,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     errorMessage = await response.text();
                 }
 
-                showMessage(`Échec de la connexion : ${errorMessage}`, 'danger');
+                showMessage(messages.connectionFailed(errorMessage), 'danger');
                 return;
             }
 
@@ -40,13 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (accessToken && refreshToken) {
                 localStorage.setItem('accessToken', accessToken);
                 localStorage.setItem('refreshToken', refreshToken);
-                localStorage.setItem('successMessage', 'Connexion réussie !');
+                localStorage.setItem('successMessage', messages.successMessage);
                 window.location.href = 'profile.html';
             } else {
-                showMessage('Échec de la connexion : aucun token reçu.', 'warning');
+                showMessage(messages.noTokens, 'warning');
             }
         } catch (error) {
-            showMessage("Une erreur s'est produite lors de la connexion. Veuillez réessayer.", 'danger');
+            showMessage(messages.retryError, 'danger');
         }
     });
 });

@@ -253,7 +253,10 @@ const translations = {
         "stats_error": "Error retrieving statistics.",
         "match_history_unavailable": "Unable to retrieve match history.",
         "match_history_error": "Error retrieving match history.",
-        "no_matches_played": "No games played yet."
+        "no_matches_played": "No games played yet.",
+		"password_mismatch": "The new passwords do not match.",
+        "password_change_error": "An error occurred while changing the password.",
+        "profile_update_error": "An error occurred while updating the profile."
     },
     fr: {
         //"game_title": "Pong",
@@ -377,7 +380,10 @@ const translations = {
         "stats_error": "Erreur lors de la récupération des statistiques.",
         "match_history_unavailable": "Impossible de récupérer l'historique des parties.",
         "match_history_error": "Erreur lors de la récupération de l'historique des parties.",
-        "no_matches_played": "Aucune partie jouée pour le moment."
+        "no_matches_played": "Aucune partie jouée pour le moment.",
+		"password_mismatch": "Les nouveaux mots de passe ne correspondent pas.",
+        "password_change_error": "Une erreur s'est produite lors du changement de mot de passe.",
+        "profile_update_error": "Une erreur est survenue lors de la mise à jour du profil."
     },
     es: {
         //"game_title": "Pong",
@@ -501,7 +507,10 @@ const translations = {
         "stats_error": "Error al recuperar las estadísticas.",
         "match_history_unavailable": "No se pudo recuperar el historial de partidas.",
         "match_history_error": "Error al recuperar el historial de partidas.",
-        "no_matches_played": "Aún no se han jugado partidas."
+        "no_matches_played": "Aún no se han jugado partidas.",
+		"password_mismatch": "Las nuevas contraseñas no coinciden.",
+        "password_change_error": "Se produjo un error al cambiar la contraseña.",
+        "profile_update_error": "Se produjo un error al actualizar el perfil."
     },
     bg: {
         "game_title": "Понг",
@@ -625,7 +634,10 @@ const translations = {
         "stats_error": "Грешка при извличането на статистиките.",
         "match_history_unavailable": "Неуспешно извличане на историята на игрите.",
         "match_history_error": "Грешка при извличането на историята на игрите.",
-        "no_matches_played": "Все още няма изиграни игри."
+        "no_matches_played": "Все още няма изиграни игри.",
+		"password_mismatch": "Новите пароли не съвпадат.",
+        "password_change_error": "Възникна грешка при смяната на паролата.",
+        "profile_update_error": "Възникна грешка при актуализирането на профила."
     }    
 };
 
