@@ -7,7 +7,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // Fonction pour mettre à jour le compteur de caractères restants
     const updateCharCount = () => {
         const remainingChars = maxUsernameLength - usernameInput.value.length;
-        usernameCharCount.textContent = `Caractères restants : ${remainingChars}`;
+
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+		let remainingCharactersText;
+
+		if (selectedLanguage === 'fr') {
+			remainingCharactersText = "Caractères restants";
+		} else if (selectedLanguage === 'es') {
+			remainingCharactersText = "Caracteres restantes";
+		} else if (selectedLanguage === 'bg') {
+			remainingCharactersText = "Оставащи символи";
+		} else {
+			remainingCharactersText = "Remaining characters";
+		}
+        usernameCharCount.textContent = `${remainingCharactersText} : ${remainingChars}`;
     };
 
     // Appeler updateCharCount lorsque l'utilisateur tape dans le champ de nom d'utilisateur

@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const confirmNewPassword = document.getElementById('confirmNewPassword').value;
 
         if (newPassword !== confirmNewPassword) {
-            passwordChangeMessage.innerHTML = '<div class="alert alert-danger">Les nouveaux mots de passe ne correspondent pas.</div>';
+            passwordChangeMessage.innerHTML = '<div class="alert alert-danger" data-translate="password_mismatch">Les nouveaux mots de passe ne correspondent pas.</div>';
             return;
         }
 
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         } catch (error) {
             console.error('Error changing password:', error);
-            passwordChangeMessage.innerHTML = '<div class="alert alert-danger">Une erreur s\'est produite lors du changement de mot de passe.</div>';
+            passwordChangeMessage.innerHTML = '<div class="alert alert-danger" data-translate="password_change_error">Une erreur s\'est produite lors du changement de mot de passe.</div>';
         }
     });
 
@@ -222,7 +222,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function validateFirstName() {
         const namePattern = /^[A-Z][a-zA-Z -]{0,49}$/;
         if (!namePattern.test(editFirstName.value.trim())) {
-            showError(editFirstName, 'Le prénom doit commencer par une lettre majuscule.');
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let firstNameErrorMessage;
+
+            if (selectedLanguage === 'fr') {
+                firstNameErrorMessage = "Le prÃ©nom doit commencer par une lettre majuscule.";
+            } else if (selectedLanguage === 'es') {
+                firstNameErrorMessage = "El nombre debe comenzar con una letra mayÃºscula.";
+            } else if (selectedLanguage === 'bg') {
+                firstNameErrorMessage = "Ð˜Ð¼ÐµÑ‚Ð¾ Ñ‚Ñ€ÑÐ±Ð²Ð° Ð´Ð° Ð·Ð°Ð¿Ð¾Ñ‡Ð²Ð° Ñ Ð³Ð»Ð°Ð²Ð½Ð° Ð±ÑƒÐºÐ²Ð°.";
+            } else {
+                firstNameErrorMessage = "First name must start with a capital letter.";
+            }
+
+            showError(editFirstName, firstNameErrorMessage);
+
             return false;
         } else {
             clearError(editFirstName);
@@ -233,7 +248,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function validateLastName() {
         const namePattern = /^[A-Z][a-zA-Z -]{0,49}$/;
         if (!namePattern.test(editLastName.value.trim())) {
-            showError(editLastName, 'Le nom doit commencer par une lettre majuscule.');
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let lastNameErrorMessage;
+
+            if (selectedLanguage === 'fr') {
+                lastNameErrorMessage = "Le nom doit commencer par une lettre majuscule.";
+            } else if (selectedLanguage === 'es') {
+                lastNameErrorMessage = "El apellido debe comenzar con una letra mayÃºscula.";
+            } else if (selectedLanguage === 'bg') {
+                lastNameErrorMessage = "Ð¤Ð°Ð¼Ð¸Ð»Ð¸ÑÑ‚Ð° Ñ‚Ñ€ÑÐ±Ð²Ð° Ð´Ð° Ð·Ð°Ð¿Ð¾Ñ‡Ð²Ð° Ñ Ð³Ð»Ð°Ð²Ð½Ð° Ð±ÑƒÐºÐ²Ð°.";
+            } else {
+                lastNameErrorMessage = "Last name must start with a capital letter.";
+            }
+
+            showError(editLastName, lastNameErrorMessage);
+
             return false;
         } else {
             clearError(editLastName);
@@ -244,7 +274,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function validateUsername() {
         const usernamePattern = /^[a-zA-Z0-9@#_-]{8}$/;
         if (!usernamePattern.test(editUsername.value.trim())) {
-            showError(editUsername, "Le nom d'utilisateur doit contenir exactement 8 caractères : lettres, chiffres, - _ @ #");
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let usernameErrorMessage;
+
+            if (selectedLanguage === 'fr') {
+                usernameErrorMessage = "Le nom d'utilisateur doit contenir exactement 8 caractÃ¨res : lettres, chiffres, - _ @ #";
+            } else if (selectedLanguage === 'es') {
+                usernameErrorMessage = "El nombre de usuario debe contener exactamente 8 caracteres: letras, nÃºmeros, - _ @ #";
+            } else if (selectedLanguage === 'bg') {
+                usernameErrorMessage = "ÐŸÐ¾Ñ‚Ñ€ÐµÐ±Ð¸Ñ‚ÐµÐ»ÑÐºÐ¾Ñ‚Ð¾ Ð¸Ð¼Ðµ Ñ‚Ñ€ÑÐ±Ð²Ð° Ð´Ð° ÑÑŠÐ´ÑŠÑ€Ð¶Ð° Ñ‚Ð¾Ñ‡Ð½Ð¾ 8 ÑÐ¸Ð¼Ð²Ð¾Ð»Ð°: Ð±ÑƒÐºÐ²Ð¸, Ñ†Ð¸Ñ„Ñ€Ð¸, - _ @ #";
+            } else {
+                usernameErrorMessage = "Username must contain exactly 8 characters: letters, numbers, - _ @ #";
+            }
+
+            showError(editUsername, usernameErrorMessage);
+
             return false;
         } else {
             clearError(editUsername);
@@ -255,7 +300,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     function validateEmail() {
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(editEmail.value)) {
-            showError(editEmail, 'Adresse email non valide.');
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let emailErrorMessage;
+
+            if (selectedLanguage === 'fr') {
+                emailErrorMessage = "Adresse email non valide.";
+            } else if (selectedLanguage === 'es') {
+                emailErrorMessage = "DirecciÃ³n de correo electrÃ³nico no vÃ¡lida.";
+            } else if (selectedLanguage === 'bg') {
+                emailErrorMessage = "ÐÐµÐ²Ð°Ð»Ð¸Ð´ÐµÐ½ Ð¸Ð¼ÐµÐ¹Ð» Ð°Ð´Ñ€ÐµÑ.";
+            } else {
+                emailErrorMessage = "Invalid email address.";
+            }
+
+            showError(editEmail, emailErrorMessage);
+
             return false;
         } else {
             clearError(editEmail);
@@ -305,14 +365,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 			userLastName.textContent = result.last_name;
 			userUsername.textContent = result.username;
 			userEmail.textContent = result.email;
-	
-			// Fermer la modale après validation
+
 			const editProfileModal = bootstrap.Modal.getInstance(document.getElementById('editProfileModal'));
 			editProfileModal.hide();
 			profileEditMessage.innerHTML = '';
 		} catch (error) {
 			console.error('Error updating profile:', error);
-			profileEditMessage.innerHTML = '<div class="alert alert-danger">Une erreur est survenue lors de la mise à jour du profil.</div>';
+			profileEditMessage.innerHTML = '<div class="alert alert-danger" data-translate="profile_update_error">Une erreur est survenue lors de la mise Ã  jour du profil.</div>';
 		}
 	});
 	

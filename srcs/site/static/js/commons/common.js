@@ -51,10 +51,10 @@ function addFooter() {
 			</div>
 
 			<div class="col-md-auto my-2">
-				<a href="https://www.linkedin.com/in/adrien-barras/" class="text-decoration-none text-white">abarras</a> |
-				<a href="https://www.linkedin.com/in/ari-monbaron-57432b179" class="text-decoration-none text-white">amonbaro</a> |
+				<a href="#" class="text-decoration-none text-white">abarras</a> |
+				<a href="#" class="text-decoration-none text-white">amonbaro</a> |
 				<a href="#" class="text-decoration-none text-white">cmansey</a> |
-				<a href="https://www.linkedin.com/in/mariya-dancheva/" class="text-decoration-none text-white">mdanchev</a>
+				<a href="#" class="text-decoration-none text-white">mdanchev</a>
 			</div>
 
 			<div class="col-md-auto my-2 small" id="language_selector_container">
@@ -78,18 +78,22 @@ function addFooter() {
 	document.getElementById('lang-en').addEventListener('click', (e) => {
         e.preventDefault();
         changeLanguage('en');
+        location.reload();
     });
     document.getElementById('lang-fr').addEventListener('click', (e) => {
         e.preventDefault();
         changeLanguage('fr');
+        location.reload();
     });
     document.getElementById('lang-es').addEventListener('click', (e) => {
         e.preventDefault();
         changeLanguage('es');
+        location.reload();
     });
     document.getElementById('lang-bg').addEventListener('click', (e) => {
         e.preventDefault();
         changeLanguage('bg');
+        location.reload();
     });
     
 }
