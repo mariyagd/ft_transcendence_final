@@ -35,8 +35,10 @@ function checkUsernameAvailability(inputField) {
         errorMessage.remove();
     }
 
-    // Check if the entered username already exists in the database
-    if (existingUsernames.includes(username)) {
+    // Check if the entered username already exists in the database or among other player inputs
+    const isUsernameTaken = existingUsernames.includes(username) || isUsernameAlreadyUsedInGame(username, inputField);
+
+    if (isUsernameTaken) {
         // Add an error message only if the username is already taken
         errorMessage = document.createElement('div');
         errorMessage.classList.add('invalid-feedback', 'text-danger');
@@ -48,7 +50,16 @@ function checkUsernameAvailability(inputField) {
     }
 }
 
-
+// Check if username is already used in another player input field
+function isUsernameAlreadyUsedInGame(username, currentInputField) {
+    const playerInputFields = document.querySelectorAll('.player-control input[type="text"]');
+    for (const field of playerInputFields) {
+        if (field !== currentInputField && field.value.trim().toLowerCase() === username) {
+            return true;
+        }
+    }
+    return false;
+}
 
 // Initialize settings and fetch existing usernames on DOM load
 document.addEventListener('DOMContentLoaded', async () => {
