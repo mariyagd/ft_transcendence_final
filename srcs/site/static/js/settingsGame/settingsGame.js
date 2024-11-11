@@ -8,32 +8,94 @@ const TOURNAMENT_MAX = 10;
 const LASTMANSTANDING_MAX = 4;
 const BRICKBREAKER_MAX = 4;
 
-document.getElementById('mode').addEventListener('change', updateOptions);
-document.getElementById('addPlayer').addEventListener('click', addPlayer);
-document.getElementById('removePlayer').addEventListener('click', removePlayer);
+let existingUsernames = [];
 
-document.getElementById('maxScore').addEventListener('input', () => {
-    document.getElementById('maxScoreValue').textContent = document.getElementById('maxScore').value;
-});
-document.getElementById('paddleSpeed').addEventListener('input', () => {
-    document.getElementById('paddleSpeedValue').textContent = document.getElementById('paddleSpeed').value;
-});
-document.getElementById('paddleSize').addEventListener('input', () => {
-    document.getElementById('paddleSizeValue').textContent = document.getElementById('paddleSize').value;
-});
-document.getElementById('ballSpeed').addEventListener('input', () => {
-    document.getElementById('ballSpeedValue').textContent = document.getElementById('ballSpeed').value;
-});
-document.getElementById('ballAcceleration').addEventListener('input', () => {
-    document.getElementById('ballAccelerationValue').textContent = document.getElementById('ballAcceleration').value;
-});
-document.getElementById('numBalls').addEventListener('input', () => {
-    document.getElementById('numBallsValue').textContent = document.getElementById('numBalls').value;
-});
-document.getElementById('map').addEventListener('input', () => {
-    document.getElementById('mapValue').textContent = document.getElementById('map').value;
+// Fetch existing usernames
+async function fetchExistingUsernames() {
+    try {
+        const response = await fetch("https://localhost:8000/api/user/show-all-users/");
+        if (response.ok) {
+            const users = await response.json();
+            existingUsernames = users.map(user => user.username.toLowerCase());
+        } else {
+            console.error('Failed to fetch existing usernames');
+        }
+    } catch (error) {
+        console.error('Error fetching usernames:', error);
+    }
+}
+
+// Check username availability and show error message if taken
+function checkUsernameAvailability(inputField) {
+    const username = inputField.value.trim().toLowerCase();
+
+    // Remove any existing error message to avoid duplicates
+    let errorMessage = inputField.parentNode.querySelector('.invalid-feedback');
+    if (errorMessage) {
+        errorMessage.remove();
+    }
+
+    // Check if the entered username already exists in the database
+    if (existingUsernames.includes(username)) {
+        // Add an error message only if the username is already taken
+        errorMessage = document.createElement('div');
+        errorMessage.classList.add('invalid-feedback', 'text-danger');
+        errorMessage.textContent = "Name already exists, try to connect!";
+        inputField.classList.add('is-invalid');
+        inputField.parentNode.appendChild(errorMessage);
+    } else {
+        inputField.classList.remove('is-invalid');
+    }
+}
+
+
+
+// Initialize settings and fetch existing usernames on DOM load
+document.addEventListener('DOMContentLoaded', async () => {
+    await fetchExistingUsernames();
+
+    document.getElementById('mode').addEventListener('change', updateOptions);
+    document.getElementById('addPlayer').addEventListener('click', addPlayer);
+    document.getElementById('removePlayer').addEventListener('click', removePlayer);
+    document.getElementById('defaultSetting').addEventListener('click', resetToDefault);
+
+    document.getElementById('player-controls-wrapper').addEventListener('input', event => {
+        if (event.target && event.target.matches('.player-control input[type="text"]')) {
+            checkUsernameAvailability(event.target);
+        }
+    });
+
+    initializeRangeDisplays();
+    updateOptions();
+    initializeStartGame();
 });
 
+// Initialize range sliders display
+function initializeRangeDisplays() {
+    document.getElementById('maxScore').addEventListener('input', () => {
+        document.getElementById('maxScoreValue').textContent = document.getElementById('maxScore').value;
+    });
+    document.getElementById('paddleSpeed').addEventListener('input', () => {
+        document.getElementById('paddleSpeedValue').textContent = document.getElementById('paddleSpeed').value;
+    });
+    document.getElementById('paddleSize').addEventListener('input', () => {
+        document.getElementById('paddleSizeValue').textContent = document.getElementById('paddleSize').value;
+    });
+    document.getElementById('ballSpeed').addEventListener('input', () => {
+        document.getElementById('ballSpeedValue').textContent = document.getElementById('ballSpeed').value;
+    });
+    document.getElementById('ballAcceleration').addEventListener('input', () => {
+        document.getElementById('ballAccelerationValue').textContent = document.getElementById('ballAcceleration').value;
+    });
+    document.getElementById('numBalls').addEventListener('input', () => {
+        document.getElementById('numBallsValue').textContent = document.getElementById('numBalls').value;
+    });
+    document.getElementById('map').addEventListener('input', () => {
+        document.getElementById('mapValue').textContent = document.getElementById('map').value;
+    });
+}
+
+// Update options based on game mode
 function updateOptions() {
     const mode = document.getElementById('mode').value;
     const maxScoreField = document.getElementById('maxScore');
@@ -53,7 +115,7 @@ function updateOptions() {
         document.getElementById('maxScoreValue').textContent = maxScoreField.value;
     }
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < initialPlayers; i++) {
         addPlayerField(i);
     }
 
@@ -61,6 +123,7 @@ function updateOptions() {
     updateRemovePlayerButton();
 }
 
+// Helper function to decide the number of players to add or remove
 function getPlayersToAddOrRemove(mode) {
     return (mode === 'versus' || mode === 'brickBreaker') ? 2 : 1;
 }
@@ -75,11 +138,7 @@ function addPlayer() {
     
     for (let i = 0; i < toAdd; i++) {
         if (currentPlayers + i < maxPlayers) {
-            if (currentPlayers + i >= 2 && mode === 'tournament') {
-                addPlayerField(currentPlayers + i, true);
-            } else {
-                addPlayerField(currentPlayers + i);
-            }
+            addPlayerField(currentPlayers + i, mode === 'tournament'); // add without controls for tournament mode
         }
     }
 
@@ -178,6 +237,8 @@ const loginModal = document.getElementById('loginModal');
 loginModal.addEventListener('shown.bs.modal', () => {
     document.getElementById('loginEmail').focus();
 });
+
+
 
 document.getElementById('defaultSetting').addEventListener('click', resetToDefault);
 

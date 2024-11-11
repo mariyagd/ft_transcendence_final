@@ -35,11 +35,34 @@ export function addPlayerField(index, noControls = false) {
     const divPlayer = document.createElement('div');
     divPlayer.classList.add('player-control', 'mb-3');
     divPlayer.innerHTML = `
-        <input type="text" class="form-control" id="player${index}" data-translate="enter_player_name" placeholder="Enter player name" autocomplete="off">
+        <input type="text" class="form-control" id="player${index}" data-translate="enter_player_name" placeholder="Enter player name" autocomplete="off" maxlength="8">
+        <div id="usernameCharCount${index}" class="form-text">Caractères restants : 8</div>
         <br>
         <button class="btn btn-outline-primary connect-btn" data-player-index="${index}" data-bs-toggle="modal" data-bs-target="#loginModal" data-translate="connect_button">Connect</button>
     `;
     playerContainer.appendChild(divPlayer);
+
+    // Fonction de mise à jour du compteur de caractères restants
+    const maxUsernameLength = 8;
+    const usernameInput = divPlayer.querySelector(`#player${index}`);
+    const charCountDisplay = divPlayer.querySelector(`#usernameCharCount${index}`);
+
+    const updateCharCount = () => {
+        const remainingChars = maxUsernameLength - usernameInput.value.length;
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+        const remainingText = {
+            'fr': 'Caractères restants',
+            'es': 'Caracteres restantes',
+            'bg': 'Оставащи символи',
+            'en': 'Remaining characters'
+        }[selectedLanguage] || 'Remaining characters';
+
+        charCountDisplay.textContent = `${remainingText} : ${remainingChars}`;
+    };
+
+    // Mise à jour du compteur de caractères à chaque frappe
+    usernameInput.addEventListener('input', updateCharCount);
+    updateCharCount();  // Initialisation du compteur de caractères
 
     const mode = document.getElementById('mode').value;
 
