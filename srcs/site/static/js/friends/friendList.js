@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         if (!friendsResponse.ok) {
             const errorText = await friendsResponse.text();
-            throw new Error(`Erreur lors de la récupération des amis: ${friendsResponse.status} ${errorText}`);
+            throw new Error(`Error retrieving friends: ${friendsResponse.status} ${errorText}`);
         }
 
         const friendsData = await friendsResponse.json();
@@ -37,11 +37,13 @@ document.addEventListener('DOMContentLoaded', async () => {
                         <div class="col-md-8">
                             <div class="card-body">
                                 <h5 class="card-title user-username">${friend.username}</h5>
-                                <p class="card-text user-joined-date">Ami depuis : ${friendEntry.timestamp}</p>
+                                <p class="card-text user-joined-date">
+                                    <span data-translate="friend_since">Ami depuis :</span> <span class="timestamp">${friendEntry.timestamp}</span>
+                                </p>
                             </div>
                         </div>
                         <div class="col-md-2 d-flex flex-column align-items-center justify-content-center">
-                            <button class="btn btn-light me-5 custom-size-btn d-flex justify-content-center align-items-center" data-friend-id="${friend.id}">
+                            <button class="btn btn-light me-5 custom-size-btn d-flex justify-content-center align-items-center" data-friend-id="${friend.id}" data-translate="details_button">
                                 Détails
                             </button>
                         </div>
@@ -56,12 +58,26 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
         } else {
             const noFriendsMessage = document.createElement('p');
-            noFriendsMessage.textContent = "Vous n'avez pas encore d'amis.";
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let noFriendsMessageText;
+
+            if (selectedLanguage === 'fr') {
+                noFriendsMessageText = "Vous n'avez pas encore d'amis.";
+            } else if (selectedLanguage === 'es') {
+                noFriendsMessageText = "Todavía no tienes amigos.";
+            } else if (selectedLanguage === 'bg') {
+                noFriendsMessageText = "Все още нямате приятели.";
+            } else {
+                noFriendsMessageText = "You don't have any friends yet.";
+            }
+
+            noFriendsMessage.textContent = noFriendsMessageText;
             friendListContainerElement.appendChild(noFriendsMessage);
         }
 
     } catch (error) {
-        console.error('Erreur lors de la récupération des amis:', error);
+        console.error('Error retrieving friends:', error);
     }
 });
 
@@ -107,10 +123,10 @@ async function fetchFriendStats(friendId) {
             const stats = await response.json();
             displayFriendStats(stats);
         } else {
-            console.error('Erreur lors de la récupération des stats de l\'ami');
+            console.error('Error retrieving friend\'s stats');
         }
     } catch (error) {
-        console.error('Erreur lors de la récupération des stats de l\'ami:', error);
+        console.error('Error retrieving friend\'s stats:', error);
     }
 }
 
@@ -146,10 +162,10 @@ async function fetchFriendMatchHistory(friendId) {
             const history = await response.json();
             displayFriendMatchHistory(history);
         } else {
-            console.error('Erreur lors de la récupération de l\'historique des parties de l\'ami');
+            console.error('Error retrieving friend\'s game history');
         }
     } catch (error) {
-        console.error('Erreur lors de la récupération de l\'historique des parties de l\'ami:', error);
+        console.error('Error retrieving friend\'s game history:', error);
     }
 }
 
@@ -159,7 +175,7 @@ function displayFriendMatchHistory(matches) {
     historyContainer.innerHTML = '';
 
     if (matches.length === 0) {
-        historyContainer.innerHTML = '<p>Aucune partie jouée pour le moment.</p>';
+        historyContainer.innerHTML = '<p data-translate="no_games_played">Aucune partie jouée pour le moment.</p>';
         return;
     }
 
@@ -170,15 +186,15 @@ function displayFriendMatchHistory(matches) {
         item.innerHTML = `
             <div class="d-flex justify-content-between align-items-center">
                 <strong>${getModeText(match.mode)}</strong>
-                <button class="btn ${match.result === 'win' ? 'btn-outline-success' : 'btn-outline-danger'} btn-sm" data-bs-toggle="collapse" data-bs-target="#friendMatchDetails${index}">
+                <button class="btn ${match.result === 'win' ? 'btn-outline-success' : 'btn-outline-danger'} btn-sm" data-bs-toggle="collapse" data-bs-target="#friendMatchDetails${index}" data-translate="details_button">
                     Détails
                 </button>
             </div>
-            <div class="text-muted">Joué le ${formatDate(match.date_played)}</div>
+            <div class="text-muted" data-translate="played_on">Joué le ${formatDate(match.date_played)}</div>
             <div id="friendMatchDetails${index}" class="collapse mt-2">
-                <p><strong>Durée :</strong> ${match.duration}</p>
-                <p><strong>Nombre de joueurs :</strong> ${match.number_of_players}</p>
-                ${match.teammate ? `<p><strong>Coéquipier :</strong> ${match.teammate}</p>` : ''}
+                <p><strong data-translate="duration">Durée :</strong> ${match.duration}</p>
+                <p><strong data-translate="number_of_players">Nombre de joueurs :</strong> ${match.number_of_players}</p>
+                ${match.teammate ? `<p><strong data-translate="teammate">Coéquipier :</strong> ${match.teammate}</p>` : ''}
             </div>
         `;
 
@@ -227,22 +243,51 @@ async function removeFriend(friendId) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de la suppression de l'ami: ${response.status} ${errorText}`);
+            throw new Error(`Error removing friend: ${response.status} ${errorText}`);
         }
 
-		showMessage("Ami supprimé avec succès", "success");
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let friendDeletedMessage;
+
+        if (selectedLanguage === 'fr') {
+            friendDeletedMessage = "Ami supprimé avec succès";
+        } else if (selectedLanguage === 'es') {
+            friendDeletedMessage = "Amigo eliminado con éxito";
+        } else if (selectedLanguage === 'bg') {
+            friendDeletedMessage = "Приятелят беше успешно изтрит";
+        } else {
+            friendDeletedMessage = "Friend successfully removed";
+        }
+
+        showMessage(friendDeletedMessage, "success");
         window.location.reload();
 
     } catch (error) {
-        console.error('Erreur lors de la suppression de l\'ami:', error);
-        messageContainer.innerHTML = `<div class="alert alert-danger">Une erreur s'est produite lors de la suppression de l'ami.</div>`;
+        console.error('Error removing friend:', error);
+        messageContainer.innerHTML = `<div class="alert alert-danger" data-translate="friend_delete_error">Une erreur s'est produite lors de la suppression de l'ami.</div>`;
     }
 }
 
 document.getElementById('removeFriendBtn').addEventListener('click', async (event) => {
     const friendId = event.target.getAttribute('data-friend-id');
     if (friendId) {
-        const confirmation = confirm('Êtes-vous sûr de vouloir supprimer cet ami ?');
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let confirmationMessage;
+
+        if (selectedLanguage === 'fr') {
+            confirmationMessage = "Êtes-vous sûr de vouloir supprimer cet ami ?";
+        } else if (selectedLanguage === 'es') {
+            confirmationMessage = "¿Estás seguro de que deseas eliminar a este amigo?";
+        } else if (selectedLanguage === 'bg') {
+            confirmationMessage = "Сигурни ли сте, че искате да изтриете този приятел?";
+        } else {
+            confirmationMessage = "Are you sure you want to delete this friend?";
+        }
+
+        const confirmation = confirm(confirmationMessage);
+
         if (confirmation) {
             await removeFriend(friendId);
             const friendDetailsModal = bootstrap.Modal.getInstance(document.getElementById('friendDetailsModal'));
@@ -250,4 +295,3 @@ document.getElementById('removeFriendBtn').addEventListener('click', async (even
         }
     }
 });
-

@@ -19,41 +19,91 @@ document.addEventListener('DOMContentLoaded', async () => {
             });
 
             if (!response.ok) {
-                throw new Error(`Erreur lors de la récupération du profil: ${response.status}`);
+                throw new Error(`Error retrieving profile: ${response.status}`);
             }
 
             const profileData = await response.json();
             return profileData.profile_photo || '../../profile_photos/default/default-user-profile-photo.jpg';
         } catch (error) {
-            showMessage("Impossible de charger la photo de profil.", "danger");
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+            let errorMessage;
+
+            if (selectedLanguage === 'fr') {
+                errorMessage = "Impossible de charger la photo de profil.";
+            } else if (selectedLanguage === 'es') {
+                errorMessage = "No se pudo cargar la foto de perfil.";
+            } else if (selectedLanguage === 'bg') {
+                errorMessage = "Неуспешно зареждане на профилната снимка.";
+            } else {
+                errorMessage = "Unable to load profile picture.";
+            }
+
+            showMessage(errorMessage, "danger");
             return '../../profile_photos/default/default-user-profile-photo.jpg';
         }
     }
 
     async function verifyToken() {
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+    
+        let sessionExpiredMessage, networkErrorMessage;
+    
+        if (selectedLanguage === 'fr') {
+            sessionExpiredMessage = 'Session expirée. Veuillez vous reconnecter.';
+            networkErrorMessage = 'Erreur réseau. Veuillez vous reconnecter.';
+        } else if (selectedLanguage === 'es') {
+            sessionExpiredMessage = 'Sesión expirada. Por favor, vuelva a iniciar sesión.';
+            networkErrorMessage = 'Error de red. Por favor, vuelva a iniciar sesión.';
+        } else if (selectedLanguage === 'bg') {
+            sessionExpiredMessage = 'Сесията е изтекла. Моля, влезте отново.';
+            networkErrorMessage = 'Мрежова грешка. Моля, влезте отново.';
+        } else {
+            sessionExpiredMessage = 'Session expired. Please log in again.';
+            networkErrorMessage = 'Network error. Please log in again.';
+        }
+    
         try {
             const verifyResponse = await fetch('https://localhost:8000/api/user/token/verify/', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token: accessToken }),
             });
-
+    
             if (!verifyResponse.ok) {
                 clearTokens();
-                showMessage("Session expirée. Veuillez vous reconnecter.", "warning");
+                showMessage(sessionExpiredMessage, 'warning');
                 window.location.href = '../index.html';
                 return false;
             }
             return true;
         } catch (error) {
             clearTokens();
-            showMessage("Erreur réseau. Veuillez vous reconnecter.", "danger");
+            showMessage(networkErrorMessage, 'danger');
             window.location.href = '../index.html';
             return false;
         }
     }
+    
 
     async function verifyUser() {
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+    
+        let accountIssueMessage, networkErrorMessage;
+    
+        if (selectedLanguage === 'fr') {
+            accountIssueMessage = "Votre compte a été supprimé ou vous n'êtes plus connecté.";
+            networkErrorMessage = "Erreur réseau lors de la vérification du profil. Veuillez vous reconnecter.";
+        } else if (selectedLanguage === 'es') {
+            accountIssueMessage = "Su cuenta ha sido eliminada o ya no está conectado.";
+            networkErrorMessage = "Error de red al verificar el perfil. Por favor, vuelva a iniciar sesión.";
+        } else if (selectedLanguage === 'bg') {
+            accountIssueMessage = "Вашият акаунт е изтрит или вече не сте влезли в системата.";
+            networkErrorMessage = "Мрежова грешка при проверка на профила. Моля, влезте отново.";
+        } else {
+            accountIssueMessage = "Your account has been deleted or you are no longer logged in.";
+            networkErrorMessage = "Network error while verifying profile. Please log in again.";
+        }
+    
         try {
             const profileResponse = await fetch('https://localhost:8000/api/user/profile/', {
                 method: 'GET',
@@ -62,21 +112,22 @@ document.addEventListener('DOMContentLoaded', async () => {
                     'Content-Type': 'application/json',
                 },
             });
-
+    
             if (!profileResponse.ok) {
                 clearTokens();
-                showMessage("Votre compte a été supprimé ou vous n'êtes plus connecté.", "warning");
+                showMessage(accountIssueMessage, "warning");
                 window.location.href = '../index.html';
                 return false;
             }
             return true;
         } catch (error) {
             clearTokens();
-            showMessage("Erreur réseau lors de la vérification du profil. Veuillez vous reconnecter.", "danger");
+            showMessage(networkErrorMessage, "danger");
             window.location.href = '../index.html';
             return false;
         }
     }
+    
 
     if (accessToken) {
         const tokenValid = await verifyToken();
@@ -97,18 +148,36 @@ document.addEventListener('DOMContentLoaded', async () => {
                 </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="profile.html">Profile</a></li>
-                <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                <li><a class="dropdown-item" href="profile.html"data-translate="profil_button">Profile</a></li>
+                <li><a class="dropdown-item" href="#" id="logoutBtn"data-translate="logout_button">Logout</a></li>
             </ul>
         `;
-
+    
         document.getElementById('logoutBtn').addEventListener('click', async () => {
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+    
+            let notConnectedMessage, logoutErrorMessage;
+    
+            if (selectedLanguage === 'fr') {
+                notConnectedMessage = "Vous n'êtes pas connecté.";
+                logoutErrorMessage = "Une erreur s'est produite lors de la déconnexion.";
+            } else if (selectedLanguage === 'es') {
+                notConnectedMessage = "No está conectado.";
+                logoutErrorMessage = "Se produjo un error al cerrar la sesión.";
+            } else if (selectedLanguage === 'bg') {
+                notConnectedMessage = "Не сте влезли в системата.";
+                logoutErrorMessage = "Възникна грешка при излизане от системата.";
+            } else {
+                notConnectedMessage = "You are not logged in.";
+                logoutErrorMessage = "An error occurred while logging out.";
+            }
+    
             if (!refreshToken) {
-                showMessage("Vous n'êtes pas connecté.", "warning");
+                showMessage(notConnectedMessage, "warning");
                 window.location.href = '../index.html';
                 return;
             }
-
+    
             try {
                 const response = await fetch('https://localhost:8000/api/user/logout/', {
                     method: 'POST',
@@ -118,18 +187,18 @@ document.addEventListener('DOMContentLoaded', async () => {
                     },
                     body: JSON.stringify({ refresh: refreshToken }),
                 });
-
+    
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(`Erreur lors de la déconnexion: ${response.status} ${errorText}`);
+                    throw new Error(`Error disconnecting: ${response.status} ${errorText}`);
                 }
-
+    
                 clearTokens();
-                localStorage.setItem('successMessage', 'Déconnexion réussie !');
+                localStorage.setItem('successMessage', 'Disconnection successful !');
                 window.location.href = '../index.html';
-
+    
             } catch (error) {
-                showMessage("Une erreur s'est produite lors de la déconnexion.", "danger");
+                showMessage(logoutErrorMessage, "danger");
             }
         });
     } else {
@@ -138,9 +207,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                 <img src="../../profile_photos/default/default-user-profile-photo.jpg" alt="User Menu" width="50" height="50" class="rounded-circle">
             </a>
             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                <li><a class="dropdown-item" href="register.html">Register</a></li>
-                <li><a class="dropdown-item" href="login.html">Login</a></li>
+                <li><a class="dropdown-item" href="register.html"data-translate="register_button">Register</a></li>
+                <li><a class="dropdown-item" href="login.html"data-translate="login_button">Login</a></li>
             </ul>
         `;
     }
+    
 });

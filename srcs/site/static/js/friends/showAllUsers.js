@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         ]);
 
         if (!usersResponse.ok || !friendsResponse.ok || !sentRequestsResponse.ok || !receivedRequestsResponse.ok) {
-            throw new Error('Erreur lors de la récupération des données.');
+            throw new Error('Error retrieving data.');
         }
 
         const users = await usersResponse.json();
@@ -86,7 +86,9 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="col-md-8">
                         <div class="card-body">
                             <h5 class="card-title user-username">${user.username}</h5>
-                            <p class="card-text user-joined-date">Membre depuis : ${user.date_joined}</p>
+                            <p class="card-text user-joined-date">
+                                <span data-translate="member_since">Membre depuis :</span> <span class="user-date-joined">${user.date_joined}</span>
+                            </p>
                         </div>
                     </div>
                     <div class="col-md-2 d-flex flex-column align-items-center justify-content-center" id="action-${user.id}">
@@ -97,20 +99,46 @@ document.addEventListener('DOMContentLoaded', async () => {
 
             const actionContainer = document.getElementById(`action-${user.id}`);
 
+            const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+            let cancelText, acceptText, declineText, addFriendText;
+
+            if (selectedLanguage === 'fr') {
+                cancelText = "Annuler";
+                acceptText = "Accepter";
+                declineText = "Refuser";
+                addFriendText = "Ajouter";
+            } else if (selectedLanguage === 'es') {
+                cancelText = "Cancelar";
+                acceptText = "Aceptar";
+                declineText = "Rechazar";
+                addFriendText = "Agregar";
+            } else if (selectedLanguage === 'bg') {
+                cancelText = "Отказ";
+                acceptText = "Приемам";
+                declineText = "Отхвърлям";
+                addFriendText = "Добавяне";
+            } else {
+                cancelText = "Cancel";
+                acceptText = "Accept";
+                declineText = "Decline";
+                addFriendText = "Add";
+            }
+
             if (sentRequestIds.has(user.id)) {
                 const cancelRequestButton = document.createElement('button');
-                cancelRequestButton.textContent = 'Annuler';
+                cancelRequestButton.textContent = cancelText;
                 cancelRequestButton.classList.add('btn', 'btn-danger', 'me-5', 'custom-size-btn', 'd-flex', 'justify-content-center', 'align-items-center');
                 cancelRequestButton.addEventListener('click', async () => await cancelFriendRequest(user.id));
                 actionContainer.appendChild(cancelRequestButton);
             } else if (receivedRequestIds.has(user.id)) {
                 const acceptButton = document.createElement('button');
-                acceptButton.textContent = 'Accepter';
+                acceptButton.textContent = acceptText;
                 acceptButton.classList.add('btn', 'btn-success', 'mb-2', 'me-5', 'custom-size-btn', 'd-flex', 'justify-content-center', 'align-items-center');
                 acceptButton.addEventListener('click', async () => await acceptFriendRequest(user.id));
 
                 const declineButton = document.createElement('button');
-                declineButton.textContent = 'Refuser';
+                declineButton.textContent = declineText;
                 declineButton.classList.add('btn', 'btn-danger', 'me-5', 'custom-size-btn', 'd-flex', 'justify-content-center', 'align-items-center');
                 declineButton.addEventListener('click', async () => await declineFriendRequest(user.id));
 
@@ -118,15 +146,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 actionContainer.appendChild(declineButton);
             } else {
                 const addFriendButton = document.createElement('button');
-                addFriendButton.textContent = 'Ajouter';
+                addFriendButton.textContent = addFriendText;
                 addFriendButton.classList.add('btn', 'btn-primary', 'me-5', 'custom-size-btn', 'd-flex', 'justify-content-center', 'align-items-center');
                 addFriendButton.addEventListener('click', async () => await sendFriendRequest(user.id));
                 actionContainer.appendChild(addFriendButton);
             }
+
         });
 
     } catch (error) {
-        console.error('Erreur lors de la gestion des utilisateurs et des amis:', error);
+        console.error('Error managing users and friends:', error);
     }
 });
 
@@ -148,15 +177,30 @@ async function sendFriendRequest(userId) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de l'envoi de la demande d'ami: ${response.status} ${errorText}`);
+            throw new Error(`Error sending friend request: ${response.status} ${errorText}`);
         }
 
-		showMessage("Demande d\'ami envoyée avec succès !", "success");
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let friendRequestSentMessage;
+
+        if (selectedLanguage === 'fr') {
+            friendRequestSentMessage = "Demande d\'ami envoyée avec succès !";
+        } else if (selectedLanguage === 'es') {
+            friendRequestSentMessage = "¡Solicitud de amistad enviada con éxito!";
+        } else if (selectedLanguage === 'bg') {
+            friendRequestSentMessage = "Заявката за приятелство е изпратена успешно!";
+        } else {
+            friendRequestSentMessage = "Friend request sent successfully!";
+        }
+
+        showMessage(friendRequestSentMessage, "success");
+
         window.location.reload();
 
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de la demande d\'ami:', error);
-        messageContainer.innerHTML = `<div class="alert alert-danger">Une erreur s'est produite lors de l'envoi de la demande d'ami.</div>`;
+        console.error('Error sending friend request:', error);
+        messageContainer.innerHTML = `<div class="alert alert-danger" data-translate="friend_request_error">Une erreur s'est produite lors de l'envoi de la demande d'ami.</div>`;
     }
 }
 
@@ -175,13 +219,28 @@ async function acceptFriendRequest(userId) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de l'acceptation de la demande d'ami: ${response.status} ${errorText}`);
+            throw new Error(`Error accepting friend request: ${response.status} ${errorText}`);
         }
 
-		showMessage("Demande d\'ami acceptée avec succès.", "success");
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let friendRequestAcceptedMessage;
+
+        if (selectedLanguage === 'fr') {
+            friendRequestAcceptedMessage = "Demande d\'ami acceptée avec succès.";
+        } else if (selectedLanguage === 'es') {
+            friendRequestAcceptedMessage = "Solicitud de amistad aceptada con éxito.";
+        } else if (selectedLanguage === 'bg') {
+            friendRequestAcceptedMessage = "Заявката за приятелство беше успешно приета.";
+        } else {
+            friendRequestAcceptedMessage = "Friend request accepted successfully.";
+        }
+
+        showMessage(friendRequestAcceptedMessage, "success");
+
         window.location.reload();
     } catch (error) {
-        console.error('Erreur lors de l\'acceptation de la demande d\'ami:', error);
+        console.error('Error accepting friend request:', error);
     }
 }
 
@@ -200,13 +259,28 @@ async function declineFriendRequest(userId) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors du refus de la demande d'ami: ${response.status} ${errorText}`);
+            throw new Error(`Error refusing friend request: ${response.status} ${errorText}`);
         }
 
-		showMessage("Demande d\'ami refusée avec succès.", "success");
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let friendRequestDeclinedMessage;
+
+        if (selectedLanguage === 'fr') {
+            friendRequestDeclinedMessage = "Demande d\'ami refusée avec succès.";
+        } else if (selectedLanguage === 'es') {
+            friendRequestDeclinedMessage = "Solicitud de amistad rechazada con éxito.";
+        } else if (selectedLanguage === 'bg') {
+            friendRequestDeclinedMessage = "Заявката за приятелство беше успешно отхвърлена.";
+        } else {
+            friendRequestDeclinedMessage = "Friend request declined successfully.";
+        }
+
+        showMessage(friendRequestDeclinedMessage, "success");
+
         window.location.reload();
     } catch (error) {
-        console.error('Erreur lors du refus de la demande d\'ami:', error);
+        console.error('Error refusing friend request:', error);
     }
 }
 
@@ -225,12 +299,27 @@ async function cancelFriendRequest(userId) {
 
         if (!response.ok) {
             const errorText = await response.text();
-            throw new Error(`Erreur lors de l'annulation de la demande d'ami: ${response.status} ${errorText}`);
+            throw new Error(`Error canceling friend request: ${response.status} ${errorText}`);
         }
 
-		showMessage("Demande d\'ami annulée avec succès.", "success");
+		const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+    let friendRequestCancelledMessage;
+
+    if (selectedLanguage === 'fr') {
+        friendRequestCancelledMessage = "Demande d\'ami annulée avec succès.";
+    } else if (selectedLanguage === 'es') {
+        friendRequestCancelledMessage = "Solicitud de amistad cancelada con éxito.";
+    } else if (selectedLanguage === 'bg') {
+        friendRequestCancelledMessage = "Заявката за приятелство беше успешно отменена.";
+    } else {
+        friendRequestCancelledMessage = "Friend request cancelled successfully.";
+    }
+
+    showMessage(friendRequestCancelledMessage, "success");
+
         window.location.reload();
     } catch (error) {
-        console.error('Erreur lors de l\'annulation de la demande d\'ami:', error);
+        console.error('Error canceling friend request:', error);
     }
 }

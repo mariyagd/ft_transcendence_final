@@ -34,17 +34,17 @@ export class Tournament {
         this.wins = this.initializeWins(playerNames);
         this.activePlayers = playerNames.slice();
         
+        this.gameTitle = "Tournament Mode";
         if (langue == 0) {
-            this.gameTitle = "Tournament Mode";
             this.gameSubtitle = "First to ";
         } else if (langue == 1) {
-            this.gameTitle = "Mode Tournoi";
+            //this.gameTitle = "Mode Tournoi";
             this.gameSubtitle = "Premier à ";
         } else if (langue == 2) {
-            this.gameTitle = "Modo Torneo";
+            //this.gameTitle = "Modo Torneo";
             this.gameSubtitle = "Primero a ";
         } else if (langue == 3) {
-            this.gameTitle = "Режим Турнир";
+            //this.gameTitle = "Режим Турнир";
             this.gameSubtitle = "Първи до ";
         }
         

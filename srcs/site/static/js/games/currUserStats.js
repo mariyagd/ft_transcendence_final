@@ -48,11 +48,11 @@ async function fetchUserStats() {
                 `;
             }).join('');
         } else {
-            statsContainer.innerHTML = '<p class="text-danger">Impossible de récupérer les statistiques.</p>';
+            statsContainer.innerHTML = '<p class="text-danger" data-translate="stats_unavailable">Impossible de récupérer les statistiques.</p>';
         }
     } catch (error) {
-        console.error('Erreur lors de la récupération des statistiques :', error);
-        statsContainer.innerHTML = '<p class="text-danger">Erreur lors de la récupération des statistiques.</p>';
+        console.error('Error retrieving statistics :', error);
+        statsContainer.innerHTML = '<p class="text-danger" data-translate="stats_error">Erreur lors de la récupération des statistiques.</p>';
     }
 }
 
