@@ -632,4 +632,5 @@ const translations = {
 document.addEventListener('DOMContentLoaded', () => {
     addFooter();
     changeLanguage();
+	setInterval(changeLanguage, 20);
 });

@@ -1,5 +1,20 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('registrationForm');
+	const form = document.getElementById('registrationForm');
+    const usernameInput = document.getElementById('username');
+    const usernameCharCount = document.getElementById('usernameCharCount');
+    const maxUsernameLength = 8;
+
+    // Fonction pour mettre à jour le compteur de caractères restants
+    const updateCharCount = () => {
+        const remainingChars = maxUsernameLength - usernameInput.value.length;
+        usernameCharCount.textContent = `Caractères restants : ${remainingChars}`;
+    };
+
+    // Appeler updateCharCount lorsque l'utilisateur tape dans le champ de nom d'utilisateur
+    usernameInput.addEventListener('input', updateCharCount);
+
+    // Initialisation de l'affichage du compteur
+    updateCharCount();
     const passwordHelpBlock = document.getElementById('passwordHelpBlock');
     const profilePhotoInput = document.getElementById('profile_photo');
     const profilePreviewContainer = document.querySelector('.profile-photo-wrapper-register');

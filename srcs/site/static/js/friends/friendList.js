@@ -190,7 +190,9 @@ function displayFriendMatchHistory(matches) {
                     Détails
                 </button>
             </div>
-            <div class="text-muted" data-translate="played_on">Joué le ${formatDate(match.date_played)}</div>
+            <div class="text-muted">
+				<span data-translate="played_on">Joué le</span> <span class="match-date">${formatDate(match.date_played)}</span>
+			</div>
             <div id="friendMatchDetails${index}" class="collapse mt-2">
                 <p><strong data-translate="duration">Durée :</strong> ${match.duration}</p>
                 <p><strong data-translate="number_of_players">Nombre de joueurs :</strong> ${match.number_of_players}</p>
