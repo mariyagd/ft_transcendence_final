@@ -1,6 +1,6 @@
 services:
   postgres:
-    build: ./requirements/postgres
+    build: /Users/amonbaro/ft_transcendence_final/srcs/requirements/postgres
     image: postgres:custom
     container_name: postgres
     expose:
@@ -19,7 +19,7 @@ services:
     restart: always
 
   auth:
-    build: ./requirements/auth
+    build: /Users/amonbaro/ft_transcendence_final/srcs/requirements/auth
     image: auth:custom
     container_name: auth
     ports:
@@ -41,11 +41,11 @@ services:
     depends_on:
       - postgres
     volumes:
-    - ./site/profile_photos:/usr/src/app/media/profile_photos
+    - profile_photos:/usr/src/app/media/profile_photos
     restart: always
 
   nginx:
-    build: ./requirements/nginx
+    build: /Users/amonbaro/ft_transcendence_final/srcs/requirements/nginx
     image: nginx:custom
     container_name: nginx
     ports:
@@ -61,15 +61,15 @@ services:
     links:
       - ganache
     volumes:
-      - ./site/static:/var/www/html/static
-      - ./site/media:/var/www/html/media
-      - ./site/profile_photos:/var/www/html/profile_photos
-      - ./site/errors:/var/www/html/errors
+      - static_files:/var/www/html/static
+      - media_files:/var/www/html/media
+      - profile_photos:/var/www/html/profile_photos
+      - errors:/var/www/html/errors
       - ./requirements/truffle/build/contracts:/var/www/html/contracts
     restart: always
 
   cron:
-    build: ./requirements/cron
+    build: /Users/amonbaro/ft_transcendence_final/srcs/requirements/cron
     image: cron:custom
     container_name: cron
     networks:
@@ -111,35 +111,35 @@ volumes:
     driver: local
     driver_opts:
       type: nfs
-      device: /Users/Shared/postgres/data/
+      device: /Users/amonbaro/Desktop/postgres/data/
       o: bind
   static_files:
     name: static_files
     driver: local
     driver_opts:
       type: none
-      device: site/static
+      device: /Users/amonbaro/ft_transcendence_final/srcs/site/static
       o: bind
   media_files:
     name: media_files
     driver: local
     driver_opts:
       type: none
-      device: site/media
+      device: /Users/amonbaro/ft_transcendence_final/srcs/site/media
       o: bind
   profile_photos:
     name: profile_photos
     driver: local
     driver_opts:
       type: none
-      device: site/profile_photos
+      device: /Users/amonbaro/ft_transcendence_final/srcs/site/profile_photos
       o: bind
   errors:
     name: errors
     driver: local
     driver_opts:
       type: none
-      device: site/errors
+      device: /Users/amonbaro/ft_transcendence_final/srcs/site/errors
       o: bind
 
 

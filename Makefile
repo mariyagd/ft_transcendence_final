@@ -5,7 +5,7 @@ GREEN := \033[0;32m
 NC := \033[0m
 
 UNAME_S := $(shell uname -s)
-POSTGRES_DIR := /Users/Shared/postgres
+POSTGRES_DIR := /Users/${USER}/Desktop/postgres
 SITE_DIR := ./srcs/site
 USERNAME := $$(whoami)
 GROUPNAME = $$(whoami)
@@ -17,17 +17,17 @@ endif
 create-directories:
 	@if [ ! -d "${POSTGRES_DIR}/data" ]; then \
 		echo "${GREEN}\nCREATING DIRECTORY \"${POSTGRES_DIR}/data\" FOR DATABASE ${NC}"; \
-		sudo mkdir -p ${POSTGRES_DIR}/data; \
+		mkdir -p ${POSTGRES_DIR}/data; \
 	fi
 
 set-permissions:
 	@echo "${GREEN}\nSETTING PERMISSIONS FOR \"${POSTGRES_DIR}/data\" DATA DIRECTORY ${NC}"
 	@if [ ${UNAME_S} = "Darwin" ]; then \
-		sudo chown -R ${USERNAME}:${GROUPENAME} ${POSTGRES_DIR}/; \
+		chown -R ${USERNAME}:${GROUPENAME} ${POSTGRES_DIR}/; \
 	elif [ ${UNAME_S} = "Linux" ]; then \
-		sudo chown -R 102:104 ${POSTGRES_DIR}/; \
+		chown -R 102:104 ${POSTGRES_DIR}/; \
 	fi
-	@sudo chmod -R 775 ${POSTGRES_DIR}/
+	@chmod -R 775 ${POSTGRES_DIR}/
 
 dangling-images:
 	@echo "${GREEN}\nCLEANING DANGLING IMAGES ${NC}"
@@ -62,24 +62,24 @@ down-rmi:
 
 clean: down
 	@echo "${GREEN}\nSUPPRIMANT LE DOSSIER BUILD DE TRUFFLE ${NC}"
-	sudo rm -rf ./srcs/requirements/truffle/build
+	rm -rf ./srcs/requirements/truffle/build
 
 # Target to remove all resources and data
 fclean: down-rmi
 	@$(MAKE) dangling
 	@echo "${GREEN}\nSUPPRIMANT LE DOSSIER BUILD DE TRUFFLE ${NC}"
-	sudo rm -rf ./srcs/requirements/truffle/build  # Ajout de la suppression du dossier build dans fclean
+	rm -rf ./srcs/requirements/truffle/build  # Ajout de la suppression du dossier build dans fclean
 	@if [ -d "${POSTGRES_DIR}/" ]; then \
   		echo "${GREEN}\nREMOVING SAVED DATA IN HOST MACHINE ${NC}"; \
-  		sudo chown -R ${USERNAME}:${GROUPENAME} ${POSTGRES_DIR}/; \
-  		sudo chmod -R 775 ${POSTGRES_DIR}/; \
+  		chown -R ${USERNAME}:${GROUPENAME} ${POSTGRES_DIR}/; \
+  		chmod -R 775 ${POSTGRES_DIR}/; \
   		rm -rf ${POSTGRES_DIR}/*; \
   		if [ ${UNAME_S} = "Darwin" ]; then \
   			rmdir ${POSTGRES_DIR}; \
 		fi; \
 	fi
 	@echo "${GREEN}\nCHANGING PERMISSIONS FOR "site/media",  "site/static" AND "/site/profile_photos" to ${USERNAME}:${GROUPNAME} ${NC}";
-	@sudo chown -R ${USERNAME}:${GROUPENAME} ${SITE_DIR}/
+	@chown -R ${USERNAME}:${GROUPENAME} ${SITE_DIR}/
 	@echo "${GREEN}\nREMOVING IMAGES IN srcs/site/profile_photos ${NC}";
 	rm -rf ${SITE_DIR}/profile_photos/users/*
 

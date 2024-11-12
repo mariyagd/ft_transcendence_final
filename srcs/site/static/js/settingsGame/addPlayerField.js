@@ -37,9 +37,22 @@ export function addPlayerField(index, noControls = false) {
     divPlayer.innerHTML = `
         <input type="text" class="form-control" id="player${index}" data-translate="enter_player_name" placeholder="Enter player name" autocomplete="off" maxlength="8">
         <div id="usernameCharCount${index}" class="form-text">Caractères restants : 8</div>
-        <br>
-        <button class="btn btn-outline-primary connect-btn" data-player-index="${index}" data-bs-toggle="modal" data-bs-target="#loginModal" data-translate="connect_button">Connect</button>
     `;
+
+    // Vérifier si un accessToken est présent dans le stockage local
+    const accessToken = localStorage.getItem('accessToken');
+    if (accessToken) {
+        // Ajouter le bouton "Connect" seulement si l'utilisateur est connecté
+        const connectButton = document.createElement('button');
+        connectButton.classList.add('btn', 'btn-outline-primary', 'connect-btn');
+        connectButton.setAttribute('data-player-index', index);
+        connectButton.setAttribute('data-bs-toggle', 'modal');
+        connectButton.setAttribute('data-bs-target', '#loginModal');
+        connectButton.setAttribute('data-translate', 'connect_button');
+        connectButton.textContent = "Connect";
+        divPlayer.appendChild(connectButton);
+    }
+
     playerContainer.appendChild(divPlayer);
 
     // Fonction de mise à jour du compteur de caractères restants
@@ -60,12 +73,10 @@ export function addPlayerField(index, noControls = false) {
         charCountDisplay.textContent = `${remainingText} : ${remainingChars}`;
     };
 
-    // Mise à jour du compteur de caractères à chaque frappe
     usernameInput.addEventListener('input', updateCharCount);
-    updateCharCount();  // Initialisation du compteur de caractères
+    updateCharCount();
 
     const mode = document.getElementById('mode').value;
-
     let upLabel = "Up Key";
     let downLabel = "Down Key";
 
@@ -76,11 +87,7 @@ export function addPlayerField(index, noControls = false) {
 
     let touchTitle = "";
     if (mode === 'tournament') {
-        if (index % 2 === 0) {
-            touchTitle = "Left players";
-        } else {
-            touchTitle = "Right players";
-        }
+        touchTitle = index % 2 === 0 ? "Left players" : "Right players";
     }
 
     if (noControls) {
@@ -99,7 +106,7 @@ export function addPlayerField(index, noControls = false) {
     }
 
     divKeys.innerHTML += `
-		<div class="mb-2 d-flex align-items-center mx-3">
+        <div class="mb-2 d-flex align-items-center mx-3">
             <label class="col-form-label text-start text-nowrap key-label" data-translate="${mode === 'brickBreaker' || (mode === 'lastManStanding' && index >= 2) ? 'left_key_label' : 'up_key_label'}">${upLabel} :</label>
             <div class="flex-grow-1 ms-4">
                 <input type="text" class="form-control touch-field" id="player${index}Up" data-translate="press_key_placeholder" placeholder="Press a key" autocomplete="off">
@@ -122,6 +129,5 @@ export function addPlayerField(index, noControls = false) {
         column.appendChild(playerContainer);
     }
 
-    // Initialisation des key bindings pour les champs de touches
     handleKeyBindings(index, mode);
 }

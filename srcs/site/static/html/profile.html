@@ -40,24 +40,24 @@
 			<div class="col-md-6 d-flex flex-column justify-content-center more-marge-top-title">
 				<div class="text-start">
 					<div class="row mb-2">
-						<div class="col-4 fw-bold fs-5 text-nowrap" data-translate="username_label">Username :</div>
-						<div class="col-8 fs-5 text-nowrap" id="userUsername"></div>
+						<div class="col-md-4 col-12 fw-bold fs-5 text-nowrap" data-translate="username_label">Username :</div>
+						<div class="col-md-8 col-12 fs-5 text-nowrap" id="userUsername"></div>
 					</div>
 					<div class="row mb-2">
-						<div class="col-4 fw-bold fs-5 text-nowrap" data-translate="first_name_label">Prénom :</div>
-						<div class="col-8 fs-5 text-nowrap" id="userFirstName"></div>
+						<div class="col-md-4 col-12 fw-bold fs-5 text-nowrap" data-translate="first_name_label">Prénom :</div>
+						<div class="col-md-8 col-12 fs-5 text-nowrap" id="userFirstName"></div>
 					</div>
 					<div class="row mb-2">
-						<div class="col-4 fw-bold fs-5 text-nowrap" data-translate="last_name_label">Nom :</div>
-						<div class="col-8 fs-5 text-nowrap" id="userLastName"></div>
+						<div class="col-md-4 col-12 fw-bold fs-5 text-nowrap" data-translate="last_name_label">Nom :</div>
+						<div class="col-md-8 col-12 fs-5 text-nowrap" id="userLastName"></div>
 					</div>
 					<div class="row mb-2">
-						<div class="col-4 fw-bold fs-5 text-nowrap" data-translate="email_label">Email :</div>
-						<div class="col-8 fs-5 text-nowrap" id="userEmail"></div>
+						<div class="col-md-4 col-12 fw-bold fs-5 text-nowrap" data-translate="email_label">Email :</div>
+						<div class="col-md-8 col-12 fs-5 text-nowrap" id="userEmail"></div>
 					</div>
 					<button class="btn btn-outline-primary mt-5" id="editProfileBtn" data-translate="edit_profile_button">Modifier le profil</button>
 					<button class="btn btn-outline-warning mt-5" id="changePasswordBtn" data-translate="change_password_button">Changer le mot de passe</button>
-				</div>
+				</div>				
 			</div>
         </div>
     </div>
@@ -224,7 +224,15 @@
 				<form id="profilePhotoForm">
 					<div class="mb-3">
 						<label for="newProfilePhoto" class="form-label" data-translate="new_profile_photo_label">Nouvelle photo de profil :</label>
-						<input type="file" class="form-control" id="newProfilePhoto" name="profile_photo" accept="image/*">
+                
+						<!-- Input de type file masqué -->
+						<input type="file" class="form-control d-none" id="newProfilePhoto" name="profile_photo" accept="image/*">
+					
+						<!-- Bouton personnalisé pour sélectionner le fichier -->
+						<button type="button" id="selectPhotoButton" class="btn btn-secondary" data-translate="select_file_button">Choisir une photo</button>
+					
+						<!-- Div pour afficher le nom du fichier sélectionné -->
+						<div id="fileNameDisplay" class="mt-2 text-muted"></div>
 					</div>
 					<button type="button" class="btn btn-danger" id="deletePhotoButton" data-translate="delete_photo_button">Supprimer la photo</button>
 					<button type="submit" class="btn btn-primary float-end" data-translate="save_changes_button">Enregistrer</button>

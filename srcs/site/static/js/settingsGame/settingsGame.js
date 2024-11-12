@@ -42,7 +42,21 @@ function checkUsernameAvailability(inputField) {
         // Add an error message only if the username is already taken
         errorMessage = document.createElement('div');
         errorMessage.classList.add('invalid-feedback', 'text-danger');
-        errorMessage.textContent = "Name already exists, try to connect!";
+        const selectedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+
+        let nameExistsMessage;
+
+        if (selectedLanguage === 'fr') {
+            nameExistsMessage = "Le nom existe déjà, essayez de vous connecter !";
+        } else if (selectedLanguage === 'es') {
+            nameExistsMessage = "El nombre ya existe, ¡intenta conectarte!";
+        } else if (selectedLanguage === 'bg') {
+            nameExistsMessage = "Името вече съществува, опитайте се да се свържете!";
+        } else {
+            nameExistsMessage = "Name already exists, try to connect!";
+        }
+
+        errorMessage.textContent = nameExistsMessage;
         inputField.classList.add('is-invalid');
         inputField.parentNode.appendChild(errorMessage);
     } else {

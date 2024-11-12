@@ -1,5 +1,18 @@
 import { main } from '../game/games.js';
 
+// Fonction pour formater la date en 'DD/MM/YYYY HH:MM:SS'
+function formatDateToStandard(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     // Charger les options de jeu depuis localStorage
     const gameOptions = JSON.parse(localStorage.getItem('gameOptions'));
@@ -7,7 +20,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Si une session de jeu existe déjà, mettre à jour la date de début pour refléter l'actualisation de la page
     if (gameSession) {
-        gameSession.start_date = new Date().toLocaleString();
+        gameSession.start_date = formatDateToStandard(new Date());
         localStorage.setItem('gameSession', JSON.stringify(gameSession));
     }
 
@@ -26,7 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
             case 'es':
                 languageIndex = 2;
                 break;
-                case 'bg':
+            case 'bg':
                 languageIndex = 3;
                 break;
             default:
@@ -50,7 +63,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
     } else {
         alert("No game options found!");
-		window.location.href = './settingsGame.html';
+        window.location.href = './settingsGame.html';
     }
 });
 
@@ -69,4 +82,3 @@ document.addEventListener('keydown', function(event) {
         event.preventDefault();
     }
 });
-

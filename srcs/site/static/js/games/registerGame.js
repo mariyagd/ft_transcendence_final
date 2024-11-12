@@ -89,7 +89,13 @@ function getGameModeCode(mode) {
 
 async function sendGameSessionToAPI(sessionData) {
     const token = await getValidToken();
-    if (!token) return;
+    
+    // Si aucun token, ne pas faire d'appel à l'API, stocker uniquement en local
+    if (!token) {
+        console.warn("No access token, game session stored locally only.");
+        localStorage.setItem('offlineGameSession', JSON.stringify(sessionData));
+        return;
+    }
 
     sessionData.session.mode = getGameModeCode(sessionData.session.mode);	
 
@@ -116,7 +122,13 @@ async function sendGameSessionToAPI(sessionData) {
 
 async function sendTournamentSessionToAPI(sessionData) {
     const token = await getValidToken();
-    if (!token) return;
+
+    // Si aucun token, ne pas faire d'appel à l'API, stocker uniquement en local
+    if (!token) {
+        console.warn("No access token, tournament session stored locally only.");
+        localStorage.setItem('offlineTournamentSession', JSON.stringify(sessionData));
+        return;
+    }
 
     sessionData.session.mode = 'TN';
     const verifiedUsers = JSON.parse(localStorage.getItem('verifiedUsers')) || {};
@@ -149,6 +161,19 @@ async function sendTournamentSessionToAPI(sessionData) {
     }
 }
 
+async function getValidToken() {
+    const accessToken = localStorage.getItem('accessToken');
+    const refreshToken = localStorage.getItem('refreshToken');
+
+    if (!accessToken) {
+        console.warn("Access token is missing. Game will be played in offline mode.");
+        return null; // Retourne null si aucun token, pour fonctionner hors-ligne
+    }
+
+    return isTokenExpired(accessToken) ? await refreshAccessToken(refreshToken) : accessToken;
+}
+
+
 
 function isTokenExpired(token) {
     const payload = JSON.parse(atob(token.split('.')[1]));
@@ -156,16 +181,18 @@ function isTokenExpired(token) {
     return payload.exp < currentTime;
 }
 
-async function getValidToken() {
-    const accessToken = localStorage.getItem('accessToken');
-    const refreshToken = localStorage.getItem('refreshToken');
 
-    if (!accessToken) {
-        console.error("Access token is missing.");
-        return null;
-    }
+// Fonction pour formater la date en 'DD/MM/YYYY HH:MM:SS'
+function formatDateToStandard(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
 
-    return isTokenExpired(accessToken) ? await refreshAccessToken(refreshToken) : accessToken;
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+
+    return `${year}/${day}/${month} ${hours}:${minutes}:${seconds}`;
 }
 
 export function storeGameSession() {
@@ -180,15 +207,18 @@ export function storeGameSession() {
             return userId ? { user: userId } : { alias: name };
         });
 
+        // Formatage correct de start_date avec formatDateToStandard avant stockage
         const sessionData = {
             session: { mode },
             players,
-            start_date: new Date().toLocaleString(),
+            start_date: formatDateToStandard(new Date()) // Assure le formatage correct
         };
 
+        // Enregistrer le format de date correct dans localStorage
         localStorage.setItem('gameSession', JSON.stringify(sessionData));
     }
 }
+//new
 
 export function registerGameWinner(winnerAlias) {
     const sessionData = JSON.parse(localStorage.getItem('gameSession'));
